@@ -179,8 +179,14 @@ const getItems = async () => {
   items.value = [];
 
   try {
-    const endpoint = `${URL_API}/${routeName}?is_active=${isActive.value}&filter=${filter.value}`;
-    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    const endpoint = `${URL_API}/${routeName}`;
+    const response = await axios.get(endpoint, {
+      params: {
+        is_active: isActive.value,
+        filter: filter.value,
+      },
+      ...getHdrs(store.getAuth?.token),
+    });
     items.value = getRsp(response).data.items;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));

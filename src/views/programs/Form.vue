@@ -357,7 +357,7 @@ const getItem = async () => {
     item.value = {
       id: null,
       is_active: 1,
-      campus_id: 1, // TOMAR DINAMICO DEL AJUSTE DE VARIABLE EN STORE DE CAMPUS
+      campus_id: store.getAuth?.campus_id,
       name: null,
       code: null,
       issued_at: currentDate.value,

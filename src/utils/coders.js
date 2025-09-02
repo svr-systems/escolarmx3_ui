@@ -4,7 +4,7 @@
  * @returns {string} ID codificado.
  */
 export const getEncodeId = (id) => {
-  return window.btoa(String(id));
+  return id ? window.btoa(String(id)) : null;
 };
 
 /**
@@ -13,11 +13,7 @@ export const getEncodeId = (id) => {
  * @returns {string|null} ID decodificado o null si falla.
  */
 export const getDecodeId = (encodedId) => {
-  try {
-    return window.atob(encodedId);
-  } catch (error) {
-    return null;
-  }
+  return encodedId ? window.atob(encodedId) : null;
 };
 
 /**

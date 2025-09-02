@@ -3,6 +3,14 @@
     <v-card-title>
       <v-row dense>
         <v-col cols="10">
+          <BtnBack
+            :route="{
+              name: 'programs/show',
+              params: {
+                id: getEncodeId(programId),
+              },
+            }"
+          />
           <CardTitle :text="route.meta.title" :icon="route.meta.icon" />
         </v-col>
         <v-col cols="2" class="text-right">
@@ -11,7 +19,12 @@
             variant="flat"
             size="x-small"
             color="success"
-            :to="{ name: `${routeName}/store` }"
+            :to="{
+              name: `${routeName}/store`,
+              params: {
+                program_id: getEncodeId(programId),
+              },
+            }"
           >
             <v-icon>mdi-plus</v-icon>
             <v-tooltip activator="parent" location="bottom">Agregar</v-tooltip>
@@ -114,13 +127,16 @@
                   :color="item.is_active ? '' : 'red-darken-3'"
                   :to="{
                     name: `${routeName}/show`,
-                    params: { id: getEncodeId(item.id) },
+                    params: {
+                      program_id: getEncodeId(programId),
+                      id: getEncodeId(item.id),
+                    },
                   }"
                 >
                   <v-icon>mdi-eye</v-icon>
-                  <v-tooltip activator="parent" location="left"
-                    >Detalle</v-tooltip
-                  >
+                  <v-tooltip activator="parent" location="left">
+                    Detalle
+                  </v-tooltip>
                 </v-btn>
               </div>
             </template>
@@ -141,16 +157,18 @@ import axios from "axios";
 import { useStore } from "@/store";
 import { URL_API } from "@/utils/config";
 import { getHdrs, getErr, getRsp } from "@/utils/http";
-import { getEncodeId } from "@/utils/coders";
+import { getDecodeId, getEncodeId } from "@/utils/coders";
+import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
 
 // Constantes
-const routeName = "programs";
+const routeName = "courses";
 const alert = inject("alert");
 const store = useStore();
 const route = useRoute();
 
 // Estado
+const programId = ref(getDecodeId(route.params.program_id));
 const isLoading = ref(false);
 const items = ref([]);
 const search = ref("");
@@ -168,6 +186,7 @@ const filterOptions = [{ id: 0, name: "TODOS" }];
 
 const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
+  { title: "Clave", key: "code", width: 120 },
   { title: "Nombre", key: "name" },
   { title: "ID Interno", key: "uiid", width: 120 },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
@@ -179,15 +198,16 @@ const getItems = async () => {
   items.value = [];
 
   try {
-    const endpoint = `${URL_API}/${routeName}`;
+    const endpoint = `${URL_API}/programs/${routeName}`;
     const response = await axios.get(endpoint, {
       params: {
         is_active: isActive.value,
         filter: filter.value,
-        campus_id: store.getAuth?.campus_id,
+        program_id: programId.value,
       },
       ...getHdrs(store.getAuth?.token),
     });
+
     items.value = getRsp(response).data.items;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
@@ -198,6 +218,6 @@ const getItems = async () => {
 
 // Cargar datos al montar
 onMounted(() => {
-  getItems();
+  if (programId.value) getItems();
 });
 </script>

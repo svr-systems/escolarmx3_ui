@@ -3,7 +3,14 @@
     <v-card-title>
       <v-row dense>
         <v-col cols="10">
-          <BtnBack :route="{ name: routeName }" />
+          <BtnBack
+            :route="{
+              name: routeName,
+              params: {
+                program_id: getEncodeId(programId),
+              },
+            }"
+          />
           <CardTitle :text="route.meta.title" :icon="route.meta.icon" />
         </v-col>
         <v-col v-if="item" cols="2" class="text-right">
@@ -12,27 +19,13 @@
             icon
             variant="flat"
             size="x-small"
-            color="info"
-            class="me-1"
-            :to="{
-              name: 'courses',
-              params: { program_id: getEncodeId(itemId) },
-            }"
-          >
-            <v-icon>mdi-book-open-variant</v-icon>
-            <v-tooltip activator="parent" location="left">
-              Asignaturas
-            </v-tooltip>
-          </v-btn>
-          <v-btn
-            v-if="item.is_active"
-            icon
-            variant="flat"
-            size="x-small"
             color="warning"
             :to="{
               name: `${routeName}/update`,
-              params: { id: getEncodeId(itemId) },
+              params: {
+                program_id: getEncodeId(programId),
+                id: getEncodeId(itemId),
+              },
             }"
           >
             <v-icon>mdi-pencil</v-icon>
@@ -92,76 +85,41 @@
                 </v-col>
               </v-row>
             </v-card-title>
-
             <v-card-text>
               <v-row dense>
                 <v-col cols="12" md="8">
                   <VisVal label="Nombre" :value="item.name" />
                 </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal label="RVOE" :value="item.code" />
+                <v-col cols="12" md="2">
+                  <VisVal label="Clave" :value="item.code" />
+                </v-col>
+                <v-col cols="12" md="2">
+                  <VisVal label="Clave interna" :value="item.alt_code" />
                 </v-col>
                 <v-col cols="12" md="4">
-                  <VisVal label="Fecha de expedición" :value="item.issued_at" />
+                  <VisVal label="Tipo" :value="item.course_type?.name" />
                 </v-col>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="2">
+                  <VisVal label="Creditos" :value="item.credits" />
+                </v-col>
+                <v-col cols="12" md="2">
                   <VisVal
-                    label="Autorización"
-                    :value="item.accreditation.name"
+                    label="Duracion de sesión (min.)"
+                    :value="item.session_minutes"
                   />
                 </v-col>
                 <v-col cols="12" md="4">
-                  <VisVal label="Modalidad" :value="item.modality.name" />
+                  <VisVal label="Periodo al que pertenece" :value="item.term" />
                 </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal label="Turno" :value="item.shift.name" />
-                </v-col>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="8">
                   <VisVal
-                    label="CURP del responsable"
-                    :value="item.responsible_curp"
+                    label="Asignatura precedente"
+                    :value="
+                      item.prerequisite_course
+                        ? `${item.prerequisite_course.name} | ${item.prerequisite_course.code}`
+                        : null
+                    "
                   />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal label="Año del plan" :value="item.plan_year" />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal label="Nivel educativo" :value="item.level.name" />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal label="Tipo de periodo" :value="item.term.name" />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal
-                    label="Número de periodos"
-                    :value="item.terms_count"
-                  />
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <v-col cols="12">
-          <v-card>
-            <v-card-title>
-              <v-row dense>
-                <v-col cols="11">
-                  <CardTitle text="CALIFICACIONES" sub />
-                </v-col>
-                <v-col cols="1" class="text-right" />
-              </v-row>
-            </v-card-title>
-            <v-card-text>
-              <v-row dense>
-                <v-col cols="12" md="4">
-                  <VisVal label="Mínima" :value="item.grade_min" />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal label="Máxima" :value="item.grade_max" />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <VisVal label="Minima aprobatoria" :value="item.grade_pass" />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -209,7 +167,7 @@ import DlgReg from "@/components/DlgReg.vue";
 import VisVal from "@/components/VisVal.vue";
 
 // Constantes fijas
-const routeName = "programs";
+const routeName = "courses";
 
 // Estado y referencias
 const alert = inject("alert");
@@ -219,6 +177,7 @@ const router = useRouter();
 const route = useRoute();
 
 // Estado reactivo
+const programId = ref(getDecodeId(route.params.program_id));
 const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);
@@ -228,7 +187,7 @@ const regDialog = ref(false);
 const getItem = async () => {
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/programs/${routeName}/${itemId.value}`;
     const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
     item.value = getRsp(response).data.item;
   } catch (err) {
@@ -245,7 +204,7 @@ const deleteItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/programs/${routeName}/${itemId.value}`;
     const response = getRsp(
       await axios.delete(endpoint, getHdrs(store.getAuth?.token))
     );
@@ -266,7 +225,7 @@ const restoreItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/restore`;
+    const endpoint = `${URL_API}/programs/${routeName}/restore`;
     const response = getRsp(
       await axios.post(
         endpoint,

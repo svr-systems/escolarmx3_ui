@@ -4,6 +4,49 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  //courses
+  {
+    path: "/institucion/carreras/:program_id/courses",
+    name: "courses",
+    component: () => import("@/views/courses/List.vue"),
+    meta: {
+      title: "Asignaturas",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/carreras/:program_id/courses/agregar",
+    name: "courses/store",
+    component: () => import("@/views/courses/Form.vue"),
+    meta: {
+      title: "Asignatura | Agregar",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/carreras/:program_id/courses/:id",
+    name: "courses/show",
+    component: () => import("@/views/courses/Show.vue"),
+    props: true,
+    meta: {
+      title: "Asignatura",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/carreras/:program_id/courses/:id/editar",
+    name: "courses/update",
+    component: () => import("@/views/courses/Form.vue"),
+    props: true,
+    meta: {
+      title: "Asignatura | Editar",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //programs
   {
     path: "/institucion/carreras",
