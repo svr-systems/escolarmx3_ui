@@ -19,7 +19,12 @@
             variant="flat"
             size="x-small"
             color="success"
-            :to="{ name: `${routeName}/store` }"
+            :to="{
+              name: `${routeName}/store`,
+              params: {
+                institution_id: getEncodeId(institutionId),
+              },
+            }"
           >
             <v-icon>mdi-plus</v-icon>
             <v-tooltip activator="parent" location="bottom">Agregar</v-tooltip>
@@ -122,7 +127,10 @@
                   :color="item.is_active ? '' : 'red-darken-3'"
                   :to="{
                     name: `${routeName}/show`,
-                    params: { id: getEncodeId(item.id) },
+                    params: {
+                      institution_id: getEncodeId(institutionId),
+                      id: getEncodeId(item.id),
+                    },
                   }"
                 >
                   <v-icon>mdi-eye</v-icon>
@@ -209,6 +217,6 @@ const getItems = async () => {
 
 // Cargar datos al montar
 onMounted(() => {
-  getItems();
+  if (institutionId.value) getItems();
 });
 </script>

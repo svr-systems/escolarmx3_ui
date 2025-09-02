@@ -1,8 +1,7 @@
 // Importación de middlewares
 import Public from "./middleware/Public";
 import Auth from "./middleware/Auth";
-import SuperAdmin from "./middleware/SuperAdmin";
-import Institution from "./middleware/Institution";
+import { Roles } from "./middleware/Roles";
 
 const routes = [
   //campuses
@@ -13,7 +12,7 @@ const routes = [
     meta: {
       title: "Campus",
       icon: "mdi-city-variant",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   {
@@ -23,7 +22,7 @@ const routes = [
     meta: {
       title: "Campus | Agregar",
       icon: "mdi-city-variant",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   {
@@ -34,7 +33,7 @@ const routes = [
     meta: {
       title: "Campus",
       icon: "mdi-city-variant",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   {
@@ -45,7 +44,7 @@ const routes = [
     meta: {
       title: "Campus | Editar",
       icon: "mdi-city-variant",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   //institutions
@@ -56,7 +55,7 @@ const routes = [
     meta: {
       title: "Instituciones",
       icon: "mdi-office-building",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   {
@@ -66,7 +65,7 @@ const routes = [
     meta: {
       title: "Institución | Agregar",
       icon: "mdi-office-building",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   {
@@ -77,7 +76,7 @@ const routes = [
     meta: {
       title: "Institución",
       icon: "mdi-office-building",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   {
@@ -88,7 +87,7 @@ const routes = [
     meta: {
       title: "Institución | Editar",
       icon: "mdi-office-building",
-      middleware: SuperAdmin,
+      middleware: [Auth, Roles([1])],
     },
   },
   //general
@@ -98,7 +97,7 @@ const routes = [
     component: () => import("@/views/general/Home.vue"),
     meta: {
       title: "Inicio",
-      middleware: Auth,
+      middleware: [Auth],
     },
   },
   {
@@ -107,7 +106,7 @@ const routes = [
     component: () => import("@/views/general/Unauthorized.vue"),
     meta: {
       title: "Acceso Denegado",
-      middleware: Auth,
+      middleware: [Auth],
     },
   },
   //public
@@ -117,7 +116,7 @@ const routes = [
     component: () => import("@/views/public/UserLogin.vue"),
     meta: {
       title: "Iniciar Sesión",
-      middleware: Public,
+      middleware: [Public],
     },
   },
   {
@@ -126,7 +125,7 @@ const routes = [
     component: () => import("@/views/public/Main.vue"),
     meta: {
       title: "EscolarMX",
-      middleware: Public,
+      middleware: [Public],
     },
   },
   {
@@ -136,7 +135,7 @@ const routes = [
     meta: {
       title: "Recuperar contraseña",
       icon: "mdi-account",
-      middleware: Public,
+      middleware: [Public],
     },
   },
   {
@@ -146,7 +145,7 @@ const routes = [
     meta: {
       title: "Restablecer contraseña",
       icon: "mdi-account",
-      middleware: Public,
+      middleware: [Public],
     },
   },
   {
@@ -156,7 +155,7 @@ const routes = [
     meta: {
       title: "Confirmar cuenta",
       icon: "mdi-account",
-      middleware: Public,
+      middleware: [Public],
     },
   },
   //not found

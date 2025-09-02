@@ -24,7 +24,9 @@
 <script setup>
 import { computed } from "vue";
 import { menuItems } from "@/utils/menu";
-import { filterMenuItemsByAccess } from "@/utils/access";
+import { useAccess } from "@/utils/access";
+
+const { filterMenuItemsByAccess } = useAccess();
 
 const props = defineProps({ modelValue: Boolean, isMobile: Boolean });
 const emit = defineEmits(["update:modelValue"]);

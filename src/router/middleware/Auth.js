@@ -1,14 +1,8 @@
 import { useStore } from "@/store";
 
-const allow = (store) => {
-  const auth = store.getAuth ?? store.auth;
-  return !!auth?.token;
-};
+const allow = (store) => !!(store.getAuth ?? store.auth)?.token;
 
-const guard = (to, from, next) => {
-  const store = useStore();
-  if (allow(store)) return next();
-  return next({ name: "login", replace: true });
-};
+const guard = (to, from, next) =>
+  allow(useStore()) ? next() : next({ name: "login", replace: true });
 
 export default { allow, guard };

@@ -3,7 +3,14 @@
     <v-card-title>
       <v-row dense>
         <v-col cols="10">
-          <BtnBack :route="{ name: routeName }" />
+          <BtnBack
+            :route="{
+              name: routeName,
+              params: {
+                institution_id: getEncodeId(institutionId),
+              },
+            }"
+          />
           <CardTitle :text="route.meta.title" :icon="route.meta.icon" />
         </v-col>
         <v-col v-if="item" cols="2" class="text-right">
@@ -15,7 +22,10 @@
             color="warning"
             :to="{
               name: `${routeName}/update`,
-              params: { id: getEncodeId(itemId) },
+              params: {
+                institution_id: getEncodeId(institutionId),
+                id: getEncodeId(itemId),
+              },
             }"
           >
             <v-icon>mdi-pencil</v-icon>
@@ -149,6 +159,7 @@ const router = useRouter();
 const route = useRoute();
 
 // Estado reactivo
+const institutionId = ref(getDecodeId(route.params.institution_id));
 const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);

@@ -107,8 +107,8 @@ const handleAction = async () => {
   isLoading.value = true;
   try {
     //PENDIENTE CERRAR SESIÓN EN BACK
-    store.logoutAction();
-    router.push({ name: "login" });
+    await store.logoutAction();
+    await router.replace({ name: "login" });
   } finally {
     isLoading.value = false;
     dialogModel.value = false;
