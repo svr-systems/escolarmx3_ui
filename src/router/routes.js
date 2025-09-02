@@ -4,6 +4,49 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  //programs
+  {
+    path: "/institucion/carreras",
+    name: "programs",
+    component: () => import("@/views/programs/List.vue"),
+    meta: {
+      title: "Carreras",
+      icon: "mdi-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/carreras/agregar",
+    name: "programs/store",
+    component: () => import("@/views/programs/Form.vue"),
+    meta: {
+      title: "Carrera | Agregar",
+      icon: "mdi-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/carreras/:id",
+    name: "programs/show",
+    component: () => import("@/views/programs/Show.vue"),
+    props: true,
+    meta: {
+      title: "Carrera",
+      icon: "mdi-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/carreras/:id/editar",
+    name: "programs/update",
+    component: () => import("@/views/programs/Form.vue"),
+    props: true,
+    meta: {
+      title: "Carrera | Editar",
+      icon: "mdi-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //campuses
   {
     path: "/instituciones/:institution_id/campus",

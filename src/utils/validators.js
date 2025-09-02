@@ -16,6 +16,30 @@ export const getRules = () => {
     !value || value.size <= maxBytes || `Máximo ${label}`;
   const fileRequiredSize = (maxBytes, label) => (value) =>
     (value && value.size <= maxBytes) || `Máximo ${label}`;
+  // ---- CURP (solo estructura) ----
+  // Catálogo de entidades
+  const CURP_STATES =
+    "(AS|BC|BS|CC|CL|CM|CS|CH|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)";
+  // Partes de la CURP
+  const CURP_PREFIX = "[A-ZÑ][AEIOU][A-ZÑ]{2}"; // ap. paterno (inicial + vocal interna) + ap. materno + nombre
+  const CURP_DATE = "\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])"; // YYMMDD (mes y día válidos)
+  const CURP_SEX = "[HM]";
+  const CURP_CONS = "[B-DF-HJ-NP-TV-ZÑ]{3}"; // consonantes internas
+  const CURP_HOMO = "[0-9A-Z]"; // homoclave
+  const CURP_DV = "\\d"; // dígito verificador (no se recalcula)
+  const CURP_REGEX = new RegExp(
+    `^${CURP_PREFIX}${CURP_DATE}${CURP_SEX}${CURP_STATES}${CURP_CONS}${CURP_HOMO}${CURP_DV}$`
+  );
+  // Normaliza y valida contra el patrón
+  const isCurp = (value) => {
+    if (!value) return true; // 'required' se encarga si aplica
+    const v = String(value).trim().toUpperCase();
+    return CURP_REGEX.test(v);
+  };
+  const curp =
+    (msg = "CURP inválida") =>
+    (value) =>
+      isCurp(value) || msg;
 
   return {
     required: [required()],
@@ -65,5 +89,8 @@ export const getRules = () => {
 
     phoneRequired: [required(), regexMatch(/^\d{10}$/, "Ingresar 10 dígitos")],
     phoneOptional: [regexMatch(/^\d{10}$/, "Ingresar 10 dígitos")],
+
+    curpRequired: [required(), curp()],
+    curpOptional: [curp()],
   };
 };

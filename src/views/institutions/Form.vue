@@ -176,7 +176,7 @@ const rules = getRules();
 const getItem = async () => {
   if (isStoreMode.value) {
     item.value = {
-      id: 1,
+      id: null,
       is_active: 1,
       name: null,
       logo_path: null,
