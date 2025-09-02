@@ -80,7 +80,7 @@
 
 <script setup>
 // Librerías
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
@@ -104,10 +104,7 @@ const store = useStore();
 
 const isLoading = ref(false);
 const formRef = ref(null);
-const item = ref({
-  email: "",
-  password: "",
-});
+const item = ref({ email: "", password: "" });
 const rules = getRules();
 
 // Funciones
@@ -121,12 +118,23 @@ const loginAction = async () => {
   try {
     const endpoint = `${URL_API}/login`;
     const response = await axios.post(endpoint, payload, getHdrs());
+
     await store.loginAction(getRsp(response).data.auth);
-    await router.push({ name: "home" });
+
+    // Reemplaza la entrada de /iniciar_sesion en el historial
+    await router.replace({ name: "home" });
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
   } finally {
     isLoading.value = false;
   }
 };
+
+// Redirección si ya existe sesión
+onMounted(() => {
+  const auth = store.getAuth ?? store.auth;
+  if (auth?.token) {
+    router.replace({ name: "home" });
+  }
+});
 </script>

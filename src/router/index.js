@@ -1,33 +1,33 @@
-// Importaciones de Vue Router
-import {
-  createRouter,
-  createWebHistory,
-  createWebHashHistory,
-} from "vue-router";
-
-// Importación de las rutas definidas
+// 1) Imports
+import { createRouter, createWebHistory } from "vue-router";
 import routes from "./routes";
 
-// Selección del historial según entorno
-const isProd = process.env.NODE_ENV === "production";
-const history = isProd
-  ? createWebHashHistory(import.meta.env.BASE_URL)
-  : createWebHistory(import.meta.env.BASE_URL);
+// 2) Historial (URLs limpias)
+const base = import.meta.env.BASE_URL || "/";
+const history = createWebHistory(base);
 
-// Instancia del router
-const router = createRouter({
-  history,
-  routes,
+// 3) Router
+const router = createRouter({ history, routes });
+
+// 4) Guard global: soporta función legacy o objeto { guard }
+router.beforeEach((to, from, next) => {
+  const mw = to.meta?.middleware;
+
+  // a) Middleware como función (legacy)
+  if (typeof mw === "function") return mw(to, from, next);
+
+  // b) Middleware como objeto { guard }
+  if (mw && typeof mw.guard === "function") return mw.guard(to, from, next);
+
+  // c) Sin middleware
+  return next();
 });
 
-// Middleware y título de la página
-router.beforeEach((to, from, next) => {
-  if (to.meta?.title) {
-    document.title = to.meta.title;
-  }
-
-  const middleware = to.meta?.middleware;
-  return typeof middleware === "function" ? middleware(to, from, next) : next();
+// 5) Título dinámico
+router.afterEach((to) => {
+  const appName = import.meta.env.VITE_APP_NAME || "App";
+  const title = to.meta?.title ? `${appName} | ${to.meta.title}` : appName;
+  document.title = title;
 });
 
 export default router;

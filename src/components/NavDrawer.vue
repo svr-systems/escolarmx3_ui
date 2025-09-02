@@ -8,31 +8,31 @@
   >
     <v-list nav>
       <v-list-item
-        v-for="(item, i) in menuItems"
-        :key="i"
-        :title="item.title"
-        :prepend-icon="item.icon"
+        v-for="item in visibleMenu"
+        :key="item.link"
         :to="{ name: item.link }"
-      />
+      >
+        <template #prepend>
+          <v-icon :icon="item.icon" />
+        </template>
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script setup>
-// Importaciones
 import { computed } from "vue";
 import { menuItems } from "@/utils/menu";
+import { filterMenuItemsByAccess } from "@/utils/access";
 
-// Props y eventos
-const props = defineProps({
-  modelValue: Boolean,
-  isMobile: Boolean,
-});
+const props = defineProps({ modelValue: Boolean, isMobile: Boolean });
 const emit = defineEmits(["update:modelValue"]);
 
-// Estado computado
 const drawerModel = computed({
   get: () => props.modelValue,
   set: (val) => emit("update:modelValue", val),
 });
+
+const visibleMenu = computed(() => filterMenuItemsByAccess(menuItems));
 </script>

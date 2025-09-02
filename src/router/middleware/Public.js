@@ -1,12 +1,12 @@
-import { useStore } from '@/store'
+import { useStore } from "@/store";
 
-export default function Public(to, from, next) {
-  const store = useStore()
-  const isAuthenticated = !!store.auth
+const allow = () => true;
 
-  if (isAuthenticated) {
-    return next({ name: 'home' })
-  } else {
-    return next()
-  }
-}
+const guard = (to, from, next) => {
+  const store = useStore();
+  const auth = store.getAuth ?? store.auth;
+  if (auth?.token) return next({ name: "home", replace: true });
+  return next();
+};
+
+export default { allow, guard };

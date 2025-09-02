@@ -2,13 +2,14 @@ import { useStore } from "@/store";
 
 const allow = (store) => {
   const auth = store.getAuth ?? store.auth;
-  return !!auth?.token;
+  const roleId = Number(auth?.user?.role_id);
+  return !!auth?.token && roleId === 1;
 };
 
 const guard = (to, from, next) => {
   const store = useStore();
   if (allow(store)) return next();
-  return next({ name: "login", replace: true });
+  return next({ name: "unauthorized", replace: true });
 };
 
 export default { allow, guard };

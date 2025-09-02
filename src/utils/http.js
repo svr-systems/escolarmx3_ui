@@ -26,7 +26,7 @@ export const getErr = (error) => {
   const msg = error?.response?.data?.msg || "Error desconocido";
   const details = error?.response?.data?.data || null;
 
-  if (import.meta.env.VITE_LOG_ERRORS === "true" && details) {
+  if (import.meta.env.VITE_PROD === "true" && details) {
     console.error(details);
   }
 
