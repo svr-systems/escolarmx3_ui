@@ -160,7 +160,7 @@
                     :value="teacher_degree.license_number"
                   />
                 </v-col>
-                <v-col cols="12" md="4" class="d-flex">
+                <v-col cols="12" md="4">
                   <VisDoc
                     label="Cédula (PDF)"
                     :value="teacher_degree.license_b64"

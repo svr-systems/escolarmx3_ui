@@ -4,7 +4,12 @@
       {{ label }}
     </div>
     <div class="text-body-2">
-      {{ value != null && value !== "" ? value : "-" }}
+      <span v-if="!bool">
+        {{ value != null && value !== "" ? value : "-" }}
+      </span>
+      <v-icon v-else small :color="value ? 'info' : ''">
+        mdi-checkbox-blank-circle{{ value ? "" : "-outline" }}
+      </v-icon>
     </div>
     <div v-if="subvalue" class="text-caption">
       <small>{{ subvalue }}</small>
@@ -18,5 +23,6 @@ defineProps({
   label: String,
   value: [String, Number, Boolean],
   subvalue: String,
+  bool: { type: Boolean, default: false },
 });
 </script>

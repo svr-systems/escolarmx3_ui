@@ -49,7 +49,6 @@
                       variant="outlined"
                       density="compact"
                       :rules="rules.required"
-                      @update:modelValue="getMunicipalities"
                     />
                   </v-col>
                   <v-col cols="12" md="4">
@@ -138,7 +137,7 @@
                       prepend-icon=""
                       show-size
                       accept=".pdf"
-                      :rules="rules.imageOptional"
+                      :rules="rules.fileOptional"
                       :disabled="item.license_dlt"
                     />
                     <div
@@ -179,7 +178,7 @@
                       prepend-icon=""
                       show-size
                       accept=".pdf"
-                      :rules="rules.imageOptional"
+                      :rules="rules.fileOptional"
                       :disabled="item.certificate_dlt"
                     />
                     <div
@@ -224,7 +223,7 @@
                       prepend-icon=""
                       show-size
                       accept=".pdf"
-                      :rules="rules.imageOptional"
+                      :rules="rules.fileOptional"
                       :disabled="item.title_dlt"
                     />
                     <div

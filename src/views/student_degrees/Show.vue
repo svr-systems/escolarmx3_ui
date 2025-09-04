@@ -118,16 +118,16 @@
                 <v-col cols="12" md="3">
                   <VisVal label="Núm. cédula" :value="item.license_number" />
                 </v-col>
-                <v-col cols="12" md="3" class="d-flex">
+                <v-col cols="12" md="3">
                   <VisDoc label="Cédula (PDF)" :value="item.license_b64" />
                 </v-col>
-                <v-col cols="12" md="3" class="d-flex">
+                <v-col cols="12" md="3">
                   <VisDoc
                     label="Certificado (PDF)"
                     :value="item.certificate_b64"
                   />
                 </v-col>
-                <v-col cols="12" md="3" class="d-flex">
+                <v-col cols="12" md="3">
                   <VisDoc label="Título (PDF)" :value="item.title_b64" />
                 </v-col>
               </v-row>

@@ -104,7 +104,7 @@
                       prepend-icon=""
                       show-size
                       accept=".pdf"
-                      :rules="rules.imageOptional"
+                      :rules="rules.fileOptional"
                       :disabled="item.user.curp_dlt"
                     />
                     <div
@@ -218,7 +218,7 @@
                       prepend-icon=""
                       show-size
                       accept=".pdf"
-                      :rules="rules.imageOptional"
+                      :rules="rules.fileOptional"
                       :disabled="item.birth_certificate_dlt"
                     />
                     <div

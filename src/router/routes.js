@@ -4,6 +4,49 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  //student_programs
+  {
+    path: "/alumnos/:student_id/carreras",
+    name: "student_programs",
+    component: () => import("@/views/student_programs/List.vue"),
+    meta: {
+      title: "Alumno | Carreras",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/carreras/agregar",
+    name: "student_programs/store",
+    component: () => import("@/views/student_programs/Form.vue"),
+    meta: {
+      title: "Alumno | Carrera | Agregar",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/carreras/:id",
+    name: "student_programs/show",
+    component: () => import("@/views/student_programs/Show.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Carrera",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/carreras/:id/editar",
+    name: "student_programs/update",
+    component: () => import("@/views/student_programs/Form.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Carrera | Editar",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //student_degrees
   {
     path: "/alumnos/:student_id/estudios_previos",

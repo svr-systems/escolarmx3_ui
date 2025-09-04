@@ -3,49 +3,29 @@
     <v-card-title>
       <v-row dense>
         <v-col cols="10">
-          <BtnBack :route="{ name: routeName }" />
+          <BtnBack
+            :route="{
+              name: routeName,
+              params: {
+                student_id: getEncodeId(studentId),
+              },
+            }"
+          />
           <CardTitle :text="route.meta.title" :icon="route.meta.icon" />
         </v-col>
         <v-col v-if="item" cols="2" class="text-right">
           <v-btn
-            v-if="item.user.is_active"
-            icon
-            variant="flat"
-            size="x-small"
-            color="info"
-            class="me-1"
-            :to="{
-              name: 'student_degrees',
-              params: { student_id: getEncodeId(itemId) },
-            }"
-          >
-            <v-icon>mdi-history</v-icon>
-            <v-tooltip activator="parent" location="left">Estudios</v-tooltip>
-          </v-btn>
-          <v-btn
-            v-if="item.user.is_active"
-            icon
-            variant="flat"
-            size="x-small"
-            color="pink"
-            class="me-1"
-            :to="{
-              name: 'student_programs',
-              params: { student_id: getEncodeId(itemId) },
-            }"
-          >
-            <v-icon>mdi-school</v-icon>
-            <v-tooltip activator="parent" location="left">Carreras</v-tooltip>
-          </v-btn>
-          <v-btn
-            v-if="item.user.is_active"
+            v-if="item.is_active"
             icon
             variant="flat"
             size="x-small"
             color="warning"
             :to="{
               name: `${routeName}/update`,
-              params: { id: getEncodeId(itemId) },
+              params: {
+                student_id: getEncodeId(studentId),
+                id: getEncodeId(itemId),
+              },
             }"
           >
             <v-icon>mdi-pencil</v-icon>
@@ -57,7 +37,7 @@
 
     <v-card-text v-if="item">
       <v-row>
-        <v-col v-if="!item.user.is_active" cols="12">
+        <v-col v-if="!item.is_active" cols="12">
           <v-alert type="error" density="compact" class="rounded">
             <v-row dense>
               <v-col class="grow pt-2">El registro se encuentra inactivo</v-col>
@@ -109,79 +89,23 @@
             <v-card-text>
               <v-row dense>
                 <v-col cols="12" md="6">
-                  <VisVal label="Nombre" :value="item.user.name" />
+                  <VisVal label="Carrera" :value="item.program?.name" />
                 </v-col>
                 <v-col cols="12" md="3">
                   <VisVal
-                    label="Apellido paterno"
-                    :value="item.user.surname_p"
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal
-                    label="Apellido materno"
-                    :value="item.user.surname_m"
+                    label="Ciclo de ingreso"
+                    :value="item.cycle_entry?.code"
                   />
                 </v-col>
                 <v-col cols="12" md="3">
                   <VisVal
-                    label="Estado civil"
-                    :value="item.user.marital_status.name"
+                    label="Equivalencia"
+                    :value="item.is_equivalency"
+                    :bool="true"
                   />
                 </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="CURP" :value="item.user.curp" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisDoc label="CURP (PDF)" :value="item.user.curp_b64" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisDoc
-                    label="Fotografía"
-                    :value="item.user.avatar_b64"
-                    img
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="CURP" :value="item.user.email" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="Teléfono" :value="item.user.phone" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisDoc
-                    label="Acta de nacimiento (PDF)"
-                    :value="item.birth_certificate_b64"
-                  />
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <v-col cols="12">
-          <v-card>
-            <v-card-title>
-              <v-row dense>
-                <v-col cols="11">
-                  <CardTitle text="TUTOR" sub />
-                </v-col>
-                <v-col cols="1" class="text-right" />
-              </v-row>
-            </v-card-title>
-            <v-card-text>
-              <v-row dense>
-                <v-col cols="12" md="3">
-                  <VisVal
-                    label="Parentesco"
-                    :value="item.guardian_kinship.name"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <VisVal label="Nombre" :value="item.guardian_name" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="Teléfono" :value="item.guardian_phone" />
+                <v-col v-if="item.is_equivalency" cols="12" md="6">
+                  <VisDoc label="Título (PDF)" :value="item.equivalency_b64" />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -189,7 +113,7 @@
         </v-col>
 
         <v-col
-          v-if="item.user.is_active && store.getAuth?.user?.role_id === 2"
+          v-if="item.is_active && store.getAuth?.user?.role_id === 2"
           cols="12"
         >
           <v-btn
@@ -206,7 +130,7 @@
       </v-row>
     </v-card-text>
 
-    <DlgReg v-model="regDialog" :item="item?.user" />
+    <DlgReg v-model="regDialog" :item="item" />
   </v-card>
 </template>
 
@@ -230,7 +154,7 @@ import VisVal from "@/components/VisVal.vue";
 import VisDoc from "@/components/VisDoc.vue";
 
 // Constantes fijas
-const routeName = "students";
+const routeName = "student_programs";
 
 // Estado y referencias
 const alert = inject("alert");
@@ -240,6 +164,7 @@ const router = useRouter();
 const route = useRoute();
 
 // Estado reactivo
+const studentId = ref(getDecodeId(route.params.student_id));
 const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);
@@ -249,7 +174,7 @@ const regDialog = ref(false);
 const getItem = async () => {
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/students/${routeName}/${itemId.value}`;
     const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
     item.value = getRsp(response).data.item;
   } catch (err) {
@@ -266,7 +191,7 @@ const deleteItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/students/${routeName}/${itemId.value}`;
     const response = getRsp(
       await axios.delete(endpoint, getHdrs(store.getAuth?.token))
     );
@@ -287,7 +212,7 @@ const restoreItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/restore`;
+    const endpoint = `${URL_API}/students/${routeName}/restore`;
     const response = getRsp(
       await axios.post(
         endpoint,
