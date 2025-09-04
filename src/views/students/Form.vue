@@ -185,7 +185,7 @@
                       </v-btn>
                     </div>
                   </v-col>
-                  <v-col cols="12" md="3">
+                  <v-col cols="12" md="6">
                     <v-text-field
                       label="E-mail"
                       v-model="item.user.email"
@@ -209,6 +209,68 @@
                       :rules="rules.phoneRequired"
                     />
                   </v-col>
+                  <v-col cols="12" md="3" class="d-flex">
+                    <v-file-input
+                      label="Acta de nacimiento (PDF)*"
+                      v-model="item.birth_certificate_doc"
+                      variant="outlined"
+                      density="compact"
+                      prepend-icon=""
+                      show-size
+                      accept=".pdf"
+                      :rules="rules.imageOptional"
+                      :disabled="item.birth_certificate_dlt"
+                    />
+                    <div
+                      v-if="
+                        !isStoreMode &&
+                        item.birth_certificate_path &&
+                        !item.birth_certificate_doc
+                      "
+                    >
+                      <BtnDwd
+                        :value="item.birth_certificate_b64"
+                        :disabled="item.birth_certificate_dlt"
+                      />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="
+                          item.birth_certificate_dlt ? 'error' : undefined
+                        "
+                        @click.prevent="
+                          item.birth_certificate_dlt =
+                            !item.birth_certificate_dlt
+                        "
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{
+                            item.birth_certificate_dlt ? "-off" : ""
+                          }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.birth_certificate_dlt
+                              ? "Revertir eliminación"
+                              : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      label="Núm. de matrícula (No necesaria para el sistema)*"
+                      v-model="item.student_number"
+                      type="text"
+                      variant="outlined"
+                      density="compact"
+                      maxlength="15"
+                      counter
+                      :rules="rules.textOptional"
+                    />
+                  </v-col>
                 </v-row>
               </v-card-text>
             </v-card>
@@ -219,141 +281,47 @@
               <v-card-title>
                 <v-row dense>
                   <v-col cols="11">
-                    <CardTitle text="ESTUDIOS ANTECEDENTES" sub />
+                    <CardTitle text="TUTOR" sub />
                   </v-col>
                   <v-col cols="1" class="text-right" />
                 </v-row>
               </v-card-title>
               <v-card-text>
-                <v-row
-                  dense
-                  v-for="(teacher_degree, i) of item.teacher_degrees"
-                  :key="i"
-                >
-                  <v-col cols="12" md="4">
+                <v-row dense>
+                  <v-col cols="12" md="3">
                     <v-select
-                      label="Nivel educativo"
-                      v-model="teacher_degree.level_id"
-                      :items="levels"
-                      :loading="levelsLoading"
+                      label="Parentesco*"
+                      v-model="item.guardian_kinship_id"
+                      :items="kinships"
+                      :loading="kinshipsLoading"
                       item-value="id"
                       item-title="name"
                       variant="outlined"
                       density="compact"
-                      :rules="rules.required"
                     />
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="6">
                     <v-text-field
-                      label="Institución educativa"
-                      v-model="teacher_degree.institution_name"
+                      label="Nombre*"
+                      v-model="item.guardian_name"
                       type="text"
                       variant="outlined"
                       density="compact"
                       maxlength="100"
                       counter
-                      :rules="rules.textRequired"
                     />
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="3">
                     <v-text-field
-                      label="Carrera"
-                      v-model="teacher_degree.name"
+                      label="Teléfono*"
+                      v-model="item.guardian_phone"
                       type="text"
                       variant="outlined"
                       density="compact"
-                      maxlength="100"
+                      maxlength="10"
                       counter
-                      :rules="rules.textRequired"
+                      :rules="rules.phoneOptional"
                     />
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      label="Núm. cédula"
-                      v-model="teacher_degree.license_number"
-                      type="text"
-                      variant="outlined"
-                      density="compact"
-                      maxlength="20"
-                      counter
-                      :rules="rules.textRequired"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="4" class="d-flex">
-                    <v-file-input
-                      label="Cédula*"
-                      v-model="teacher_degree.license_doc"
-                      variant="outlined"
-                      density="compact"
-                      prepend-icon=""
-                      show-size
-                      accept=".pdf"
-                      :rules="rules.imageOptional"
-                      :disabled="teacher_degree.license_dlt"
-                    />
-                    <div
-                      v-if="
-                        !isStoreMode &&
-                        teacher_degree.license_path &&
-                        !teacher_degree.license_doc
-                      "
-                    >
-                      <BtnDwd
-                        :value="teacher_degree.license_b64"
-                        :disabled="teacher_degree.license_dlt"
-                      />
-                      <v-btn
-                        icon
-                        variant="text"
-                        size="small"
-                        :color="
-                          teacher_degree.license_dlt ? 'error' : undefined
-                        "
-                        @click.prevent="
-                          teacher_degree.license_dlt =
-                            !teacher_degree.license_dlt
-                        "
-                      >
-                        <v-icon size="small">
-                          mdi-delete{{
-                            teacher_degree.license_dlt ? "-off" : ""
-                          }}
-                        </v-icon>
-                        <v-tooltip activator="parent" location="bottom">
-                          {{
-                            teacher_degree.license_dlt
-                              ? "Revertir eliminación"
-                              : "Eliminar"
-                          }}
-                        </v-tooltip>
-                      </v-btn>
-                    </div>
-                  </v-col>
-                  <v-col cols="12" md="4" class="text-right pt-2">
-                    <v-btn
-                      v-if="i !== 0"
-                      icon
-                      size="x-small"
-                      color="error"
-                      @click="teacherDegreesRemove(i)"
-                    >
-                      <v-icon size="x-small">mdi-minus</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12" class="pb-4">
-                    <v-divider />
-                  </v-col>
-                </v-row>
-                <v-row dense>
-                  <v-col cols="12">
-                    <v-btn
-                      size="x-small"
-                      color="warning"
-                      @click="teacherDegreesAdd()"
-                    >
-                      Agregar
-                      <v-icon size="x-small" end>mdi-plus</v-icon>
-                    </v-btn>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -395,12 +363,7 @@ import { URL_API } from "@/utils/config";
 import { getHdrs, getErr, getRsp } from "@/utils/http";
 import { getDecodeId, getEncodeId } from "@/utils/coders";
 import { getRules } from "@/utils/validators";
-import {
-  getObj,
-  extractNestedProp,
-  extractMultipleNestedProps,
-  getFormData,
-} from "@/utils/helpers";
+import { getObj, extractNestedProp, getFormData } from "@/utils/helpers";
 import { getUserObj } from "@/utils/objects";
 
 // Componentes
@@ -409,7 +372,7 @@ import CardTitle from "@/components/CardTitle.vue";
 import BtnDwd from "@/components/BtnDwd.vue";
 
 // Constantes fijas
-const routeName = "teachers";
+const routeName = "students";
 
 // Estado y referencias
 const alert = inject("alert");
@@ -427,8 +390,8 @@ const item = ref(null);
 const rules = getRules();
 const maritalStatuses = ref([]);
 const maritalStatusesLoading = ref(true);
-const levels = ref([]);
-const levelsLoading = ref(true);
+const kinships = ref([]);
+const kinshipsLoading = ref(true);
 
 // Obtener catálogos
 const getCatalogs = async () => {
@@ -446,13 +409,13 @@ const getCatalogs = async () => {
   }
 
   try {
-    endpoint = `${URL_API}/levels`;
+    endpoint = `${URL_API}/kinships`;
     response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
-    levels.value = getRsp(response).data.items;
+    kinships.value = getRsp(response).data.items;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
   } finally {
-    levelsLoading.value = false;
+    kinshipsLoading.value = false;
   }
 };
 
@@ -462,13 +425,16 @@ const getItem = async () => {
     item.value = {
       id: null,
       user: getUserObj(),
-      teacher_degrees: [],
+      student_number: null,
+      guardian_kinship_id: null,
+      guardian_name: null,
+      guardian_phone: null,
+      birth_certificate_path: null,
+      birth_certificate_doc: null,
+      birth_certificate_dlt: false,
     };
 
     item.value.user.user_campuses[0].campus_id = store.getAuth?.campus_id;
-
-    teacherDegreesAdd();
-
     isLoading.value = false;
   } else {
     try {
@@ -480,28 +446,6 @@ const getItem = async () => {
     } finally {
       isLoading.value = false;
     }
-  }
-};
-
-const teacherDegreesAdd = async () => {
-  item.value.teacher_degrees.push({
-    id: null,
-    is_active: 1,
-    level_id: null,
-    institution_name: null,
-    name: null,
-    license_number: null,
-    license_path: null,
-    license_doc: null,
-    license_dlt: false,
-  });
-};
-
-const teacherDegreesRemove = async (i) => {
-  if (item.value.teacher_degrees[i].id === null) {
-    item.value.teacher_degrees.splice(i, 1);
-  } else {
-    item.value.teacher_degrees[i].is_active = 0;
   }
 };
 
@@ -522,11 +466,6 @@ const handleAction = async () => {
   let payload = getObj(item.value, isStoreMode.value);
   payload = extractNestedProp(payload, "user", "curp_doc");
   payload = extractNestedProp(payload, "user", "avatar_doc");
-  payload = extractMultipleNestedProps(
-    payload,
-    "teacher_degrees",
-    "license_doc"
-  );
 
   try {
     const endpoint = `${URL_API}/${routeName}${

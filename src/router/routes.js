@@ -4,6 +4,49 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  //students
+  {
+    path: "/alumnos",
+    name: "students",
+    component: () => import("@/views/students/List.vue"),
+    meta: {
+      title: "Alumnos",
+      icon: "mdi-account-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/agregar",
+    name: "students/store",
+    component: () => import("@/views/students/Form.vue"),
+    meta: {
+      title: "Alumno | Agregar",
+      icon: "mdi-account-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:id",
+    name: "students/show",
+    component: () => import("@/views/students/Show.vue"),
+    props: true,
+    meta: {
+      title: "Alumno",
+      icon: "mdi-account-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:id/editar",
+    name: "students/update",
+    component: () => import("@/views/students/Form.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Editar",
+      icon: "mdi-account-school",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //cycles
   {
     path: "/ciclos",
@@ -49,7 +92,7 @@ const routes = [
   },
   //teachers
   {
-    path: "/institucion/docentes",
+    path: "/docentes",
     name: "teachers",
     component: () => import("@/views/teachers/List.vue"),
     meta: {
@@ -59,7 +102,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/docentes/agregar",
+    path: "/docentes/agregar",
     name: "teachers/store",
     component: () => import("@/views/teachers/Form.vue"),
     meta: {
@@ -69,7 +112,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/docentes/:id",
+    path: "/docentes/:id",
     name: "teachers/show",
     component: () => import("@/views/teachers/Show.vue"),
     props: true,
@@ -80,7 +123,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/docentes/:id/editar",
+    path: "/docentes/:id/editar",
     name: "teachers/update",
     component: () => import("@/views/teachers/Form.vue"),
     props: true,
@@ -92,7 +135,7 @@ const routes = [
   },
   //courses
   {
-    path: "/institucion/carreras/:program_id/courses",
+    path: "/carreras/:program_id/courses",
     name: "courses",
     component: () => import("@/views/courses/List.vue"),
     meta: {
@@ -102,7 +145,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/carreras/:program_id/courses/agregar",
+    path: "/carreras/:program_id/courses/agregar",
     name: "courses/store",
     component: () => import("@/views/courses/Form.vue"),
     meta: {
@@ -112,7 +155,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/carreras/:program_id/courses/:id",
+    path: "/carreras/:program_id/courses/:id",
     name: "courses/show",
     component: () => import("@/views/courses/Show.vue"),
     props: true,
@@ -123,7 +166,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/carreras/:program_id/courses/:id/editar",
+    path: "/carreras/:program_id/courses/:id/editar",
     name: "courses/update",
     component: () => import("@/views/courses/Form.vue"),
     props: true,
@@ -135,7 +178,7 @@ const routes = [
   },
   //programs
   {
-    path: "/institucion/carreras",
+    path: "/carreras",
     name: "programs",
     component: () => import("@/views/programs/List.vue"),
     meta: {
@@ -145,7 +188,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/carreras/agregar",
+    path: "/carreras/agregar",
     name: "programs/store",
     component: () => import("@/views/programs/Form.vue"),
     meta: {
@@ -155,7 +198,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/carreras/:id",
+    path: "/carreras/:id",
     name: "programs/show",
     component: () => import("@/views/programs/Show.vue"),
     props: true,
@@ -166,7 +209,7 @@ const routes = [
     },
   },
   {
-    path: "/institucion/carreras/:id/editar",
+    path: "/carreras/:id/editar",
     name: "programs/update",
     component: () => import("@/views/programs/Form.vue"),
     props: true,
