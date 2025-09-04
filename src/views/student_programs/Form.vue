@@ -19,6 +19,12 @@
     </v-card-title>
 
     <v-card-text v-if="item">
+      <div cols="12" class="text-caption text-center">
+        <span v-if="studentMeta">
+          {{ `${studentMeta.user.full_name} | ${studentMeta.user.curp}` }}
+        </span>
+        <v-progress-circular v-else indeterminate size="12" />
+      </div>
       <v-form ref="formRef" @submit.prevent>
         <v-row>
           <v-col cols="12">
@@ -182,6 +188,7 @@ const route = useRoute();
 
 // Estado reactivo
 const studentId = ref(getDecodeId(route.params.student_id));
+const studentMeta = ref(null);
 const itemId = ref(route.params.id ? getDecodeId(route.params.id) : null);
 const isStoreMode = ref(!itemId.value);
 const isLoading = ref(true);
@@ -229,6 +236,18 @@ const getCatalogs = async () => {
     alert?.show("red-darken-1", getErr(err));
   } finally {
     cyclesLoading.value = false;
+  }
+};
+
+const getMeta = async () => {
+  try {
+    const endpoint = `${URL_API}/students/${studentId.value}`;
+    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    studentMeta.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -311,6 +330,7 @@ const handleAction = async () => {
 
 // Inicialización
 onMounted(() => {
+  getMeta();
   getCatalogs();
   getItem();
 });

@@ -35,6 +35,12 @@
 
     <v-card-text>
       <v-row dense>
+        <v-col cols="12" class="text-caption text-center">
+          <span v-if="studentMeta">
+            {{ `${studentMeta.user.full_name} | ${studentMeta.user.curp}` }}
+          </span>
+          <v-progress-circular v-else indeterminate size="12" />
+        </v-col>
         <v-col cols="12" md="9" class="pb-0">
           <v-row dense>
             <v-col
@@ -169,6 +175,7 @@ const route = useRoute();
 
 // Estado
 const studentId = ref(getDecodeId(route.params.student_id));
+const studentMeta = ref(null);
 const isLoading = ref(false);
 const items = ref([]);
 const search = ref("");
@@ -190,6 +197,18 @@ const headers = [
   { title: "ID Interno", key: "uiid", width: 120 },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
+
+const getMeta = async () => {
+  try {
+    const endpoint = `${URL_API}/students/${studentId.value}`;
+    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    studentMeta.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 // Cargar registros
 const getItems = async () => {
@@ -217,6 +236,7 @@ const getItems = async () => {
 
 // Cargar datos al montar
 onMounted(() => {
-  if (studentId.value) getItems();
+  getMeta();
+  getItems();
 });
 </script>

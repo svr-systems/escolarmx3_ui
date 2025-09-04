@@ -356,7 +356,7 @@ const routes = [
     meta: {
       title: "Campus",
       icon: "mdi-city-variant",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -366,7 +366,7 @@ const routes = [
     meta: {
       title: "Campus | Agregar",
       icon: "mdi-city-variant",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -377,7 +377,7 @@ const routes = [
     meta: {
       title: "Campus",
       icon: "mdi-city-variant",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -388,7 +388,7 @@ const routes = [
     meta: {
       title: "Campus | Editar",
       icon: "mdi-city-variant",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //institutions
@@ -399,7 +399,7 @@ const routes = [
     meta: {
       title: "Instituciones",
       icon: "mdi-office-building",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -409,7 +409,7 @@ const routes = [
     meta: {
       title: "Institución | Agregar",
       icon: "mdi-office-building",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -420,7 +420,7 @@ const routes = [
     meta: {
       title: "Institución",
       icon: "mdi-office-building",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -431,7 +431,7 @@ const routes = [
     meta: {
       title: "Institución | Editar",
       icon: "mdi-office-building",
-      middleware: [Auth, Roles([1])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //general

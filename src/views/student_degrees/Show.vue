@@ -36,6 +36,12 @@
     </v-card-title>
 
     <v-card-text v-if="item">
+      <div cols="12" class="text-caption text-center">
+        <span v-if="studentMeta">
+          {{ `${studentMeta.user.full_name} | ${studentMeta.user.curp}` }}
+        </span>
+        <v-progress-circular v-else indeterminate size="12" />
+      </div>
       <v-row>
         <v-col v-if="!item.is_active" cols="12">
           <v-alert type="error" density="compact" class="rounded">
@@ -188,10 +194,23 @@ const route = useRoute();
 
 // Estado reactivo
 const studentId = ref(getDecodeId(route.params.student_id));
+const studentMeta = ref(null);
 const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);
 const regDialog = ref(false);
+
+const getMeta = async () => {
+  try {
+    const endpoint = `${URL_API}/students/${studentId.value}`;
+    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    studentMeta.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 // Obtener registro
 const getItem = async () => {
@@ -254,6 +273,7 @@ const restoreItem = async () => {
 
 // Inicializar
 onMounted(() => {
+  getMeta();
   getItem();
 });
 </script>

@@ -169,6 +169,7 @@ const filterOptions = [{ id: 0, name: "TODOS" }];
 const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
   { title: "Nombre", key: "user.full_name" },
+  { title: "CURP", key: "user.curp" },
   { title: "ID Interno", key: "uiid", width: 120 },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];

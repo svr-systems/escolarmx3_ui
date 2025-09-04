@@ -35,6 +35,14 @@
 
     <v-card-text>
       <v-row dense>
+        <v-col cols="12" class="text-caption text-center">
+          <span v-if="programMeta">
+            {{
+              `${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
+            }}
+          </span>
+          <v-progress-circular v-else indeterminate size="12" />
+        </v-col>
         <v-col cols="12" md="9" class="pb-0">
           <v-row dense>
             <v-col
@@ -169,6 +177,7 @@ const route = useRoute();
 
 // Estado
 const programId = ref(getDecodeId(route.params.program_id));
+const programMeta = ref(null);
 const isLoading = ref(false);
 const items = ref([]);
 const search = ref("");
@@ -191,6 +200,18 @@ const headers = [
   { title: "ID Interno", key: "uiid", width: 120 },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
+
+const getMeta = async () => {
+  try {
+    const endpoint = `${URL_API}/programs/${programId.value}`;
+    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    programMeta.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 // Cargar registros
 const getItems = async () => {
@@ -218,6 +239,7 @@ const getItems = async () => {
 
 // Cargar datos al montar
 onMounted(() => {
-  if (programId.value) getItems();
+  getMeta();
+  getItems();
 });
 </script>
