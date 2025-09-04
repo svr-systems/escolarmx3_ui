@@ -4,6 +4,49 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  //teachers
+  {
+    path: "/institucion/docentes",
+    name: "teachers",
+    component: () => import("@/views/teachers/List.vue"),
+    meta: {
+      title: "Docentes",
+      icon: "mdi-human-male-board",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/docentes/agregar",
+    name: "teachers/store",
+    component: () => import("@/views/teachers/Form.vue"),
+    meta: {
+      title: "Docente | Agregar",
+      icon: "mdi-human-male-board",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/docentes/:id",
+    name: "teachers/show",
+    component: () => import("@/views/teachers/Show.vue"),
+    props: true,
+    meta: {
+      title: "Docente",
+      icon: "mdi-human-male-board",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/institucion/docentes/:id/editar",
+    name: "teachers/update",
+    component: () => import("@/views/teachers/Form.vue"),
+    props: true,
+    meta: {
+      title: "Docente | Editar",
+      icon: "mdi-human-male-board",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //courses
   {
     path: "/institucion/carreras/:program_id/courses",

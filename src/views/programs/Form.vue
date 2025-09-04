@@ -340,6 +340,7 @@ const getCatalogs = async () => {
   } finally {
     levelsLoading.value = false;
   }
+  
   try {
     endpoint = `${URL_API}/terms`;
     response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
