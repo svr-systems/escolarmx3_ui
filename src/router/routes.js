@@ -47,6 +47,49 @@ const routes = [
       middleware: [Auth, Roles([2])],
     },
   },
+  //student_documents
+  {
+    path: "/alumnos/:student_id/documentos",
+    name: "student_documents",
+    component: () => import("@/views/student_documents/List.vue"),
+    meta: {
+      title: "Alumno | Documentos",
+      icon: "mdi-folder",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/documentos/agregar",
+    name: "student_documents/store",
+    component: () => import("@/views/student_documents/Form.vue"),
+    meta: {
+      title: "Alumno | Documento | Agregar",
+      icon: "mdi-folder",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/documentos/:id",
+    name: "student_documents/show",
+    component: () => import("@/views/student_documents/Show.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Documento",
+      icon: "mdi-folder",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/documentos/:id/editar",
+    name: "student_documents/update",
+    component: () => import("@/views/student_documents/Form.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Documento | Editar",
+      icon: "mdi-folder",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //student_degrees
   {
     path: "/alumnos/:student_id/estudios_previos",

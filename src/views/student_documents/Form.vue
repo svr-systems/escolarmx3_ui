@@ -38,12 +38,21 @@
               </v-card-title>
               <v-card-text>
                 <v-row dense>
+                  <v-col cols="12" md="3">
+                    <InpDate
+                      label="Fecha de recepción"
+                      v-model="item.received_at"
+                      :rules="rules.required"
+                      :before="true"
+                      :disabled="store.getAuth?.user?.role_id !== 2"
+                    />
+                  </v-col>
                   <v-col cols="12" md="6">
                     <v-autocomplete
-                      label="Carrera"
-                      v-model="item.program_id"
-                      :items="programs"
-                      :loading="programsLoading"
+                      label="Tipo"
+                      v-model="item.document_type_id"
+                      :items="documentTypes"
+                      :loading="documentTypesLoading"
                       item-value="id"
                       item-title="name"
                       variant="outlined"
@@ -51,14 +60,52 @@
                       :rules="rules.required"
                     />
                   </v-col>
+                  <v-col cols="12" md="3" class="d-flex">
+                    <v-file-input
+                      label="Archivo (PDF)"
+                      v-model="item.document_doc"
+                      variant="outlined"
+                      density="compact"
+                      prepend-icon=""
+                      show-size
+                      accept=".pdf"
+                      :rules="rules.fileRequired"
+                      :disabled="item.document_dlt"
+                    />
+                    <div
+                      v-if="
+                        !isStoreMode && item.document_path && !item.document_doc
+                      "
+                    >
+                      <BtnDwd
+                        :value="item.document_b64"
+                        :disabled="item.document_dlt"
+                      />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="item.document_dlt ? 'error' : undefined"
+                        @click.prevent="item.document_dlt = !item.document_dlt"
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{ item.document_dlt ? "-off" : "" }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.document_dlt
+                              ? "Revertir eliminación"
+                              : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
+                  </v-col>
                   <v-col cols="12" md="3">
-                    <v-autocomplete
-                      label="Ciclo de ingreso"
-                      v-model="item.cycle_entry_id"
-                      :items="cycles"
-                      :loading="cyclesLoading"
-                      item-value="id"
-                      item-title="code"
+                    <v-text-field
+                      label="Número de copias"
+                      v-model="item.copies_count"
+                      type="number"
                       variant="outlined"
                       density="compact"
                       :rules="rules.required"
@@ -66,62 +113,12 @@
                   </v-col>
                   <v-col cols="12" md="3">
                     <v-switch
-                      label="Equivalencia"
-                      v-model="item.is_equivalency"
+                      label="¿Deja original?"
+                      v-model="item.is_original_left"
                       color="info"
                       density="compact"
                       class="ml-1"
                     />
-                  </v-col>
-                  <v-col
-                    v-if="item.is_equivalency"
-                    cols="12"
-                    md="6"
-                    class="d-flex"
-                  >
-                    <v-file-input
-                      label="Evidencia de equivalencia (PDF)*"
-                      v-model="item.equivalency_doc"
-                      variant="outlined"
-                      density="compact"
-                      prepend-icon=""
-                      show-size
-                      accept=".pdf"
-                      :rules="rules.fileOptional"
-                      :disabled="item.equivalency_dlt"
-                    />
-                    <div
-                      v-if="
-                        !isStoreMode &&
-                        item.equivalency_path &&
-                        !item.equivalency_doc
-                      "
-                    >
-                      <BtnDwd
-                        :value="item.equivalency_b64"
-                        :disabled="item.equivalency_dlt"
-                      />
-                      <v-btn
-                        icon
-                        variant="text"
-                        size="small"
-                        :color="item.equivalency_dlt ? 'error' : undefined"
-                        @click.prevent="
-                          item.equivalency_dlt = !item.equivalency_dlt
-                        "
-                      >
-                        <v-icon size="small">
-                          mdi-delete{{ item.equivalency_dlt ? "-off" : "" }}
-                        </v-icon>
-                        <v-tooltip activator="parent" location="bottom">
-                          {{
-                            item.equivalency_dlt
-                              ? "Revertir eliminación"
-                              : "Eliminar"
-                          }}
-                        </v-tooltip>
-                      </v-btn>
-                    </div>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -164,14 +161,16 @@ import { getHdrs, getErr, getRsp } from "@/utils/http";
 import { getDecodeId, getEncodeId } from "@/utils/coders";
 import { getRules } from "@/utils/validators";
 import { getObj, getFormData } from "@/utils/helpers";
+import { getDateTime } from "@/utils/formatters";
 
 // Componentes
 import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
+import InpDate from "@/components/InpDate.vue";
 import BtnDwd from "@/components/BtnDwd.vue";
 
 // Constantes fijas
-const routeName = "student_programs";
+const routeName = "student_documents";
 
 // Estado y referencias
 const alert = inject("alert");
@@ -188,10 +187,8 @@ const isLoading = ref(true);
 const formRef = ref(null);
 const item = ref(null);
 const rules = getRules();
-const programs = ref([]);
-const programsLoading = ref(true);
-const cycles = ref([]);
-const cyclesLoading = ref(true);
+const documentTypes = ref([]);
+const documentTypesLoading = ref(true);
 
 // Obtener catálogos
 const getCatalogs = async () => {
@@ -199,36 +196,13 @@ const getCatalogs = async () => {
   let response = null;
 
   try {
-    endpoint = `${URL_API}/programs`;
-    response = await axios.get(endpoint, {
-      params: {
-        is_active: 1,
-        filter: 0,
-        campus_id: store.getAuth?.campus_id,
-      },
-      ...getHdrs(store.getAuth?.token),
-    });
-    programs.value = getRsp(response).data.items;
+    endpoint = `${URL_API}/document_types`;
+    response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    documentTypes.value = getRsp(response).data.items;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
   } finally {
-    programsLoading.value = false;
-  }
-
-  try {
-    endpoint = `${URL_API}/cycles`;
-    response = await axios.get(endpoint, {
-      params: {
-        is_active: 1,
-        filter: 0,
-      },
-      ...getHdrs(store.getAuth?.token),
-    });
-    cycles.value = getRsp(response).data.items;
-  } catch (err) {
-    alert?.show("red-darken-1", getErr(err));
-  } finally {
-    cyclesLoading.value = false;
+    documentTypesLoading.value = false;
   }
 };
 
@@ -239,15 +213,13 @@ const getItem = async () => {
       id: null,
       is_active: 1,
       student_id: studentId.value,
-      program_id: null,
-      cycle_entry_id: null,
-      is_equivalency: false,
-      equivalency_path: null,
-      equivalency_doc: null,
-      equivalency_dlt: false,
-      cycle_dropout_id: null,
-      cycle_reentry_id: null,
-      cycle_graduated_id: null,
+      received_at: getDateTime("-", "", "", false),
+      document_type_id: null,
+      is_original_left: false,
+      copies_count: 0,
+      document_path: null,
+      document_doc: null,
+      document_dlt: false,
     };
     isLoading.value = false;
   } else {
