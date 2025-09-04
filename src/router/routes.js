@@ -4,6 +4,49 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  //student_degrees
+  {
+    path: "/alumnos/:student_id/estudios_previos",
+    name: "student_degrees",
+    component: () => import("@/views/student_degrees/List.vue"),
+    meta: {
+      title: "Alumno | Estudios previos",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/estudios_previos/agregar",
+    name: "student_degrees/store",
+    component: () => import("@/views/student_degrees/Form.vue"),
+    meta: {
+      title: "Alumno | Estudio previos | Agregar",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/estudios_previos/:id",
+    name: "student_degrees/show",
+    component: () => import("@/views/student_degrees/Show.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Estudio previos",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/alumnos/:student_id/estudios_previos/:id/editar",
+    name: "student_degrees/update",
+    component: () => import("@/views/student_degrees/Form.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Estudio previos | Editar",
+      icon: "mdi-history",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //students
   {
     path: "/alumnos",

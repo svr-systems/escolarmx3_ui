@@ -12,6 +12,21 @@
             icon
             variant="flat"
             size="x-small"
+            color="info"
+            class="me-1"
+            :to="{
+              name: 'student_degrees',
+              params: { student_id: getEncodeId(itemId) },
+            }"
+          >
+            <v-icon>mdi-history</v-icon>
+            <v-tooltip activator="parent" location="left">Estudios</v-tooltip>
+          </v-btn>
+          <v-btn
+            v-if="item.user.is_active"
+            icon
+            variant="flat"
+            size="x-small"
             color="warning"
             :to="{
               name: `${routeName}/update`,

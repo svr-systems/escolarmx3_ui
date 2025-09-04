@@ -3,19 +3,29 @@
     <v-card-title>
       <v-row dense>
         <v-col cols="10">
-          <BtnBack :route="{ name: routeName }" />
+          <BtnBack
+            :route="{
+              name: routeName,
+              params: {
+                student_id: getEncodeId(studentId),
+              },
+            }"
+          />
           <CardTitle :text="route.meta.title" :icon="route.meta.icon" />
         </v-col>
         <v-col v-if="item" cols="2" class="text-right">
           <v-btn
-            v-if="item.user.is_active"
+            v-if="item.is_active"
             icon
             variant="flat"
             size="x-small"
             color="warning"
             :to="{
               name: `${routeName}/update`,
-              params: { id: getEncodeId(itemId) },
+              params: {
+                student_id: getEncodeId(studentId),
+                id: getEncodeId(itemId),
+              },
             }"
           >
             <v-icon>mdi-pencil</v-icon>
@@ -27,7 +37,7 @@
 
     <v-card-text v-if="item">
       <v-row>
-        <v-col v-if="!item.user.is_active" cols="12">
+        <v-col v-if="!item.is_active" cols="12">
           <v-alert type="error" density="compact" class="rounded">
             <v-row dense>
               <v-col class="grow pt-2">El registro se encuentra inactivo</v-col>
@@ -78,96 +88,47 @@
 
             <v-card-text>
               <v-row dense>
-                <v-col cols="12" md="6">
-                  <VisVal label="Nombre" :value="item.user.name" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal
-                    label="Apellido paterno"
-                    :value="item.user.surname_p"
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal
-                    label="Apellido materno"
-                    :value="item.user.surname_m"
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal
-                    label="Estado civil"
-                    :value="item.user.marital_status.name"
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="CURP" :value="item.user.curp" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisDoc label="CURP (PDF)" :value="item.user.curp_b64" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisDoc
-                    label="Fotografía"
-                    :value="item.user.avatar_b64"
-                    img
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="CURP" :value="item.user.email" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="Teléfono" :value="item.user.phone" />
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <v-col cols="12">
-          <v-card>
-            <v-card-title>
-              <v-row dense>
-                <v-col cols="11">
-                  <CardTitle text="ESTUDIOS ANTECEDENTES" sub />
-                </v-col>
-                <v-col cols="1" class="text-right" />
-              </v-row>
-            </v-card-title>
-            <v-card-text>
-              <v-row
-                dense
-                v-for="(teacher_degree, i) of item.teacher_degrees"
-                :key="i"
-              >
                 <v-col cols="12" md="4">
-                  <VisVal
-                    label="Nivel educativo"
-                    :value="teacher_degree.level.name"
-                  />
+                  <VisVal label="Nivel educativo" :value="item.level?.name" />
                 </v-col>
                 <v-col cols="12" md="4">
                   <VisVal
                     label="Institución educativa"
-                    :value="teacher_degree.institution_name"
+                    :value="item.institution_name"
                   />
                 </v-col>
                 <v-col cols="12" md="4">
-                  <VisVal label="Carrera" :value="teacher_degree.name" />
+                  <VisVal label="Carrera" :value="item.name" />
                 </v-col>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="3">
                   <VisVal
-                    label="Núm. cédula"
-                    :value="teacher_degree.license_number"
+                    label="Estado"
+                    :value="item.municipality?.state?.name"
                   />
                 </v-col>
-                <v-col cols="12" md="4" class="d-flex">
+                <v-col cols="12" md="3">
+                  <VisVal label="Municipio" :value="item.municipality?.name" />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <VisVal label="Inicio" :value="item.start_at" />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <VisVal label="Fin" :value="item.end_at" />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <VisVal label="Núm. cédula" :value="item.license_number" />
+                </v-col>
+                <v-col cols="12" md="3" class="d-flex">
+                  <VisDoc label="Cédula (PDF)" :value="item.license_b64" />
+                </v-col>
+                <v-col cols="12" md="3" class="d-flex">
                   <VisDoc
-                    label="Cédula (PDF)"
-                    :value="teacher_degree.license_b64"
+                    label="Certificado (PDF)"
+                    :value="item.certificate_b64"
                   />
                 </v-col>
-                <v-col cols="12" class="pb-4">
-                  <v-divider />
+                <v-col cols="12" md="3" class="d-flex">
+                  <VisDoc label="Título (PDF)" :value="item.title_b64" />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -175,7 +136,7 @@
         </v-col>
 
         <v-col
-          v-if="item.user.is_active && store.getAuth?.user?.role_id === 2"
+          v-if="item.is_active && store.getAuth?.user?.role_id === 2"
           cols="12"
         >
           <v-btn
@@ -192,7 +153,7 @@
       </v-row>
     </v-card-text>
 
-    <DlgReg v-model="regDialog" :item="item?.user" />
+    <DlgReg v-model="regDialog" :item="item" />
   </v-card>
 </template>
 
@@ -216,7 +177,7 @@ import VisVal from "@/components/VisVal.vue";
 import VisDoc from "@/components/VisDoc.vue";
 
 // Constantes fijas
-const routeName = "teachers";
+const routeName = "student_degrees";
 
 // Estado y referencias
 const alert = inject("alert");
@@ -226,6 +187,7 @@ const router = useRouter();
 const route = useRoute();
 
 // Estado reactivo
+const studentId = ref(getDecodeId(route.params.student_id));
 const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);
@@ -235,7 +197,7 @@ const regDialog = ref(false);
 const getItem = async () => {
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/students/${routeName}/${itemId.value}`;
     const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
     item.value = getRsp(response).data.item;
   } catch (err) {
@@ -252,7 +214,7 @@ const deleteItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/students/${routeName}/${itemId.value}`;
     const response = getRsp(
       await axios.delete(endpoint, getHdrs(store.getAuth?.token))
     );
@@ -273,7 +235,7 @@ const restoreItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/${routeName}/restore`;
+    const endpoint = `${URL_API}/students/${routeName}/restore`;
     const response = getRsp(
       await axios.post(
         endpoint,
