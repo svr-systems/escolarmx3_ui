@@ -92,5 +92,11 @@ export const getRules = () => {
 
     curpRequired: [required(), curp()],
     curpOptional: [curp()],
+
+    cycleRequired: [
+      required(),
+      regexMatch(/^\d{4}-\d+$/, "Formato inválido, usar AAAA-N"),
+    ],
+    cycleOptional: [regexMatch(/^\d{4}-\d+$/, "Formato inválido, usar AAAA-N")],
   };
 };

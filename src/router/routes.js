@@ -4,6 +4,49 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  //cycles
+  {
+    path: "/ciclos",
+    name: "cycles",
+    component: () => import("@/views/cycles/List.vue"),
+    meta: {
+      title: "Ciclos",
+      icon: "mdi-calendar-blank",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/ciclos/agregar",
+    name: "cycles/store",
+    component: () => import("@/views/cycles/Form.vue"),
+    meta: {
+      title: "Ciclo | Agregar",
+      icon: "mdi-calendar-blank",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/ciclos/:id",
+    name: "cycles/show",
+    component: () => import("@/views/cycles/Show.vue"),
+    props: true,
+    meta: {
+      title: "Ciclo",
+      icon: "mdi-calendar-blank",
+      middleware: [Auth, Roles([2])],
+    },
+  },
+  {
+    path: "/ciclos/:id/editar",
+    name: "cycles/update",
+    component: () => import("@/views/cycles/Form.vue"),
+    props: true,
+    meta: {
+      title: "Ciclo | Editar",
+      icon: "mdi-calendar-blank",
+      middleware: [Auth, Roles([2])],
+    },
+  },
   //teachers
   {
     path: "/institucion/docentes",
