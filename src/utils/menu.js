@@ -4,5 +4,6 @@ export const menuItems = [
   { title: "Ciclos", icon: "mdi-calendar-blank", link: "cycles" },
   { title: "Docentes", icon: "mdi-human-male-board", link: "teachers" },
   { title: "Carreras", icon: "mdi-school", link: "programs" },
-  { title: "Instituciones", icon: "mdi-town-hall", link: "institutions" },
+  { title: "Campus", icon: "mdi-city-variant", link: "campuses" },
+  { title: "Configuración", icon: "mdi-cog", link: "settings/show" },
 ];

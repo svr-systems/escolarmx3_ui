@@ -22,12 +22,7 @@
               <v-card-title>
                 <v-row dense>
                   <v-col cols="11">
-                    <CardTitle
-                      :text="`DATOS GENERALES${
-                        isStoreMode ? '' : ' | ' + (item.uiid || '')
-                      }`"
-                      sub
-                    />
+                    <CardTitle text="DATOS GENERALES" sub />
                   </v-col>
                   <v-col cols="1" class="text-right" />
                 </v-row>
@@ -71,19 +66,6 @@
                     />
                   </v-col>
                   <v-col cols="12" md="3">
-                    <v-select
-                      label="Estado civil"
-                      v-model="item.user.marital_status_id"
-                      :items="maritalStatuses"
-                      :loading="maritalStatusesLoading"
-                      item-value="id"
-                      item-title="name"
-                      variant="outlined"
-                      density="compact"
-                      :rules="rules.required"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="3">
                     <v-text-field
                       label="CURP"
                       v-model="item.user.curp"
@@ -95,52 +77,60 @@
                       :rules="rules.curpRequired"
                     />
                   </v-col>
-                  <v-col cols="12" md="3" class="d-flex">
-                    <v-file-input
-                      label="CURP (PDF)*"
-                      v-model="item.user.curp_doc"
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      label="E-mail"
+                      v-model="item.user.email"
+                      type="text"
                       variant="outlined"
                       density="compact"
-                      prepend-icon=""
-                      show-size
-                      accept=".pdf"
-                      :rules="rules.fileOptional"
-                      :disabled="item.user.curp_dlt"
+                      maxlength="65"
+                      counter
+                      :rules="rules.emailRequired"
                     />
-                    <div
-                      v-if="
-                        !isStoreMode &&
-                        item.user.curp_path &&
-                        !item.user.curp_doc
-                      "
-                    >
-                      <BtnDwd
-                        :value="item.user.curp_b64"
-                        :disabled="item.user.curp_dlt"
-                      />
-                      <v-btn
-                        icon
-                        variant="text"
-                        size="small"
-                        :color="item.user.curp_dlt ? 'error' : undefined"
-                        @click.prevent="
-                          item.user.curp_dlt = !item.user.curp_dlt
-                        "
-                      >
-                        <v-icon size="small">
-                          mdi-delete{{ item.user.curp_dlt ? "-off" : "" }}
-                        </v-icon>
-                        <v-tooltip activator="parent" location="bottom">
-                          {{
-                            item.user.curp_dlt
-                              ? "Revertir eliminación"
-                              : "Eliminar"
-                          }}
-                        </v-tooltip>
-                      </v-btn>
-                    </div>
                   </v-col>
-                  <v-col cols="12" md="3" class="d-flex">
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      label="Teléfono"
+                      v-model="item.user.phone"
+                      type="text"
+                      variant="outlined"
+                      density="compact"
+                      maxlength="10"
+                      counter
+                      :rules="rules.phoneRequired"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-select
+                      label="Estado civil*"
+                      v-model="item.user.marital_status_id"
+                      :items="maritalStatuses"
+                      :loading="maritalStatusesLoading"
+                      item-value="id"
+                      item-title="name"
+                      variant="outlined"
+                      density="compact"
+                    />
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12">
+            <v-card>
+              <v-card-title>
+                <v-row dense>
+                  <v-col cols="11">
+                    <CardTitle text="DOCUMENTOS" sub />
+                  </v-col>
+                  <v-col cols="1" class="text-right" />
+                </v-row>
+              </v-card-title>
+              <v-card-text>
+                <v-row dense>
+                  <v-col cols="12" md="4" class="d-flex">
                     <v-file-input
                       label="Fotografía*"
                       v-model="item.user.avatar_doc"
@@ -185,28 +175,225 @@
                       </v-btn>
                     </div>
                   </v-col>
+                  <v-col cols="12" md="4" class="d-flex">
+                    <v-file-input
+                      label="CURP (PDF)*"
+                      v-model="item.user.curp_doc"
+                      variant="outlined"
+                      density="compact"
+                      prepend-icon=""
+                      show-size
+                      accept=".pdf"
+                      :rules="rules.fileOptional"
+                      :disabled="item.user.curp_dlt"
+                    />
+                    <div
+                      v-if="
+                        !isStoreMode &&
+                        item.user.curp_path &&
+                        !item.user.curp_doc
+                      "
+                    >
+                      <BtnDwd
+                        :value="item.user.curp_b64"
+                        :disabled="item.user.curp_dlt"
+                      />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="item.user.curp_dlt ? 'error' : undefined"
+                        @click.prevent="
+                          item.user.curp_dlt = !item.user.curp_dlt
+                        "
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{ item.user.curp_dlt ? "-off" : "" }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.user.curp_dlt
+                              ? "Revertir eliminación"
+                              : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="4" class="d-flex">
+                    <v-file-input
+                      label="Acta de nacimiento (PDF)*"
+                      v-model="item.user.birth_certificate_doc"
+                      variant="outlined"
+                      density="compact"
+                      prepend-icon=""
+                      show-size
+                      accept=".pdf"
+                      :rules="rules.fileOptional"
+                      :disabled="item.user.birth_certificate_dlt"
+                    />
+                    <div
+                      v-if="
+                        !isStoreMode &&
+                        item.user.birth_certificate_path &&
+                        !item.user.birth_certificate_doc
+                      "
+                    >
+                      <BtnDwd
+                        :value="item.user.birth_certificate_b64"
+                        :disabled="item.user.birth_certificate_dlt"
+                      />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="
+                          item.user.birth_certificate_dlt ? 'error' : undefined
+                        "
+                        @click.prevent="
+                          item.user.birth_certificate_dlt =
+                            !item.user.birth_certificate_dlt
+                        "
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{
+                            item.user.birth_certificate_dlt ? "-off" : ""
+                          }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.user.birth_certificate_dlt
+                              ? "Revertir eliminación"
+                              : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="4" class="d-flex">
+                    <v-file-input
+                      label="INE (PDF)*"
+                      v-model="item.user.ine_doc"
+                      variant="outlined"
+                      density="compact"
+                      prepend-icon=""
+                      show-size
+                      accept=".pdf"
+                      :rules="rules.fileOptional"
+                      :disabled="item.user.ine_dlt"
+                    />
+                    <div
+                      v-if="
+                        !isStoreMode && item.user.ine_path && !item.user.ine_doc
+                      "
+                    >
+                      <BtnDwd
+                        :value="item.user.ine_b64"
+                        :disabled="item.user.ine_dlt"
+                      />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="item.user.ine_dlt ? 'error' : undefined"
+                        @click.prevent="item.user.ine_dlt = !item.user.ine_dlt"
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{ item.user.ine_dlt ? "-off" : "" }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.user.ine_dlt
+                              ? "Revertir eliminación"
+                              : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="4" class="d-flex">
+                    <v-file-input
+                      label="Currículum Vitae (PDF)*"
+                      v-model="item.cv_doc"
+                      variant="outlined"
+                      density="compact"
+                      prepend-icon=""
+                      show-size
+                      accept=".pdf"
+                      :rules="rules.fileOptional"
+                      :disabled="item.cv_dlt"
+                    />
+                    <div v-if="!isStoreMode && item.cv_path && !item.cv_doc">
+                      <BtnDwd :value="item.cv_b64" :disabled="item.cv_dlt" />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="item.cv_dlt ? 'error' : undefined"
+                        @click.prevent="item.cv_dlt = !item.cv_dlt"
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{ item.cv_dlt ? "-off" : "" }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.cv_dlt ? "Revertir eliminación" : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12">
+            <v-card>
+              <v-card-title>
+                <v-row dense>
+                  <v-col cols="11">
+                    <CardTitle text="PERSONA DE CONTACTO" sub />
+                  </v-col>
+                  <v-col cols="1" class="text-right" />
+                </v-row>
+              </v-card-title>
+              <v-card-text>
+                <v-row dense>
                   <v-col cols="12" md="3">
+                    <v-autocomplete
+                      label="Parentesco*"
+                      v-model="item.user.contact_kinship_id"
+                      :items="kinships"
+                      :loading="kinshipsLoading"
+                      item-value="id"
+                      item-title="name"
+                      variant="outlined"
+                      density="compact"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="6">
                     <v-text-field
-                      label="E-mail"
-                      v-model="item.user.email"
+                      label="Nombre*"
+                      v-model="item.user.contact_name"
                       type="text"
                       variant="outlined"
                       density="compact"
-                      maxlength="65"
+                      maxlength="100"
                       counter
-                      :rules="rules.emailRequired"
+                      :rules="rules.textOptional"
                     />
                   </v-col>
                   <v-col cols="12" md="3">
                     <v-text-field
                       label="Teléfono"
-                      v-model="item.user.phone"
+                      v-model="item.user.contact_phone"
                       type="text"
                       variant="outlined"
                       density="compact"
                       maxlength="10"
                       counter
-                      :rules="rules.phoneRequired"
+                      :rules="rules.phoneOptional"
                     />
                   </v-col>
                 </v-row>
@@ -225,131 +412,243 @@
                 </v-row>
               </v-card-title>
               <v-card-text>
-                <v-row
-                  dense
+                <template
                   v-for="(teacher_degree, i) of item.teacher_degrees"
                   :key="i"
                 >
-                  <v-col cols="12" md="4">
-                    <v-select
-                      label="Nivel educativo"
-                      v-model="teacher_degree.level_id"
-                      :items="levels"
-                      :loading="levelsLoading"
-                      item-value="id"
-                      item-title="name"
-                      variant="outlined"
-                      density="compact"
-                      :rules="rules.required"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      label="Institución educativa"
-                      v-model="teacher_degree.institution_name"
-                      type="text"
-                      variant="outlined"
-                      density="compact"
-                      maxlength="100"
-                      counter
-                      :rules="rules.textRequired"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      label="Carrera"
-                      v-model="teacher_degree.name"
-                      type="text"
-                      variant="outlined"
-                      density="compact"
-                      maxlength="100"
-                      counter
-                      :rules="rules.textRequired"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      label="Núm. cédula"
-                      v-model="teacher_degree.license_number"
-                      type="text"
-                      variant="outlined"
-                      density="compact"
-                      maxlength="20"
-                      counter
-                      :rules="rules.textRequired"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="4" class="d-flex">
-                    <v-file-input
-                      label="Cédula*"
-                      v-model="teacher_degree.license_doc"
-                      variant="outlined"
-                      density="compact"
-                      prepend-icon=""
-                      show-size
-                      accept=".pdf"
-                      :rules="rules.fileOptional"
-                      :disabled="teacher_degree.license_dlt"
-                    />
-                    <div
-                      v-if="
-                        !isStoreMode &&
-                        teacher_degree.license_path &&
-                        !teacher_degree.license_doc
-                      "
-                    >
-                      <BtnDwd
-                        :value="teacher_degree.license_b64"
+                  <v-row dense v-if="teacher_degree.is_active == 1">
+                    <v-col cols="12" md="4">
+                      <v-select
+                        label="Nivel educativo"
+                        v-model="teacher_degree.level_id"
+                        :items="levels"
+                        :loading="levelsLoading"
+                        item-value="id"
+                        item-title="name"
+                        variant="outlined"
+                        density="compact"
+                        :rules="rules.required"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <v-text-field
+                        label="Institución educativa"
+                        v-model="teacher_degree.institution_name"
+                        type="text"
+                        variant="outlined"
+                        density="compact"
+                        maxlength="100"
+                        counter
+                        :rules="rules.textRequired"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <v-text-field
+                        label="Carrera"
+                        v-model="teacher_degree.name"
+                        type="text"
+                        variant="outlined"
+                        density="compact"
+                        maxlength="100"
+                        counter
+                        :rules="rules.textRequired"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <v-text-field
+                        label="Núm. cédula"
+                        v-model="teacher_degree.license_number"
+                        type="text"
+                        variant="outlined"
+                        density="compact"
+                        maxlength="20"
+                        counter
+                        :rules="rules.textRequired"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="4" class="d-flex">
+                      <v-file-input
+                        label="Cédula (PDF)*"
+                        v-model="teacher_degree.license_doc"
+                        variant="outlined"
+                        density="compact"
+                        prepend-icon=""
+                        show-size
+                        accept=".pdf"
+                        :rules="rules.fileOptional"
                         :disabled="teacher_degree.license_dlt"
                       />
-                      <v-btn
-                        icon
-                        variant="text"
-                        size="small"
-                        :color="
-                          teacher_degree.license_dlt ? 'error' : undefined
-                        "
-                        @click.prevent="
-                          teacher_degree.license_dlt =
-                            !teacher_degree.license_dlt
+                      <div
+                        v-if="
+                          !isStoreMode &&
+                          teacher_degree.license_path &&
+                          !teacher_degree.license_doc
                         "
                       >
-                        <v-icon size="small">
-                          mdi-delete{{
-                            teacher_degree.license_dlt ? "-off" : ""
-                          }}
-                        </v-icon>
-                        <v-tooltip activator="parent" location="bottom">
-                          {{
-                            teacher_degree.license_dlt
-                              ? "Revertir eliminación"
-                              : "Eliminar"
-                          }}
-                        </v-tooltip>
+                        <BtnDwd
+                          :value="teacher_degree.license_b64"
+                          :disabled="teacher_degree.license_dlt"
+                        />
+                        <v-btn
+                          icon
+                          variant="text"
+                          size="small"
+                          :color="
+                            teacher_degree.license_dlt ? 'error' : undefined
+                          "
+                          @click.prevent="
+                            teacher_degree.license_dlt =
+                              !teacher_degree.license_dlt
+                          "
+                        >
+                          <v-icon size="small">
+                            mdi-delete{{
+                              teacher_degree.license_dlt ? "-off" : ""
+                            }}
+                          </v-icon>
+                          <v-tooltip activator="parent" location="bottom">
+                            {{
+                              teacher_degree.license_dlt
+                                ? "Revertir eliminación"
+                                : "Eliminar"
+                            }}
+                          </v-tooltip>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" md="3" class="d-flex">
+                      <v-file-input
+                        label="Título (PDF)*"
+                        v-model="teacher_degree.title_doc"
+                        variant="outlined"
+                        density="compact"
+                        prepend-icon=""
+                        show-size
+                        accept=".pdf"
+                        :rules="rules.fileOptional"
+                        :disabled="teacher_degree.title_dlt"
+                      />
+                      <div
+                        v-if="
+                          !isStoreMode &&
+                          teacher_degree.title_path &&
+                          !teacher_degree.title_doc
+                        "
+                      >
+                        <BtnDwd
+                          :value="teacher_degree.title_b64"
+                          :disabled="teacher_degree.title_dlt"
+                        />
+                        <v-btn
+                          icon
+                          variant="text"
+                          size="small"
+                          :color="
+                            teacher_degree.title_dlt ? 'error' : undefined
+                          "
+                          @click.prevent="
+                            teacher_degree.title_dlt = !teacher_degree.title_dlt
+                          "
+                        >
+                          <v-icon size="small">
+                            mdi-delete{{
+                              teacher_degree.title_dlt ? "-off" : ""
+                            }}
+                          </v-icon>
+                          <v-tooltip activator="parent" location="bottom">
+                            {{
+                              teacher_degree.title_dlt
+                                ? "Revertir eliminación"
+                                : "Eliminar"
+                            }}
+                          </v-tooltip>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" md="1" class="text-right pt-2">
+                      <v-btn
+                        v-if="i !== 0"
+                        icon
+                        size="x-small"
+                        color="error"
+                        @click="teacherDegreesRemove(i)"
+                      >
+                        <v-icon size="x-small">mdi-minus</v-icon>
                       </v-btn>
-                    </div>
-                  </v-col>
-                  <v-col cols="12" md="4" class="text-right pt-2">
-                    <v-btn
-                      v-if="i !== 0"
-                      icon
-                      size="x-small"
-                      color="error"
-                      @click="teacherDegreesRemove(i)"
-                    >
-                      <v-icon size="x-small">mdi-minus</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12" class="pb-4">
-                    <v-divider />
-                  </v-col>
-                </v-row>
+                    </v-col>
+                    <v-col cols="12" class="pb-4">
+                      <v-divider />
+                    </v-col>
+                  </v-row>
+                </template>
+
                 <v-row dense>
                   <v-col cols="12">
                     <v-btn
                       size="x-small"
                       color="warning"
                       @click="teacherDegreesAdd()"
+                    >
+                      Agregar
+                      <v-icon size="x-small" end>mdi-plus</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12">
+            <v-card>
+              <v-card-title>
+                <v-row dense>
+                  <v-col cols="11">
+                    <CardTitle text="CAMPUS" sub />
+                  </v-col>
+                  <v-col cols="1" class="text-right" />
+                </v-row>
+              </v-card-title>
+              <v-card-text>
+                <template
+                  v-for="(user_campus, i) in item.user.user_campuses"
+                  :key="i"
+                >
+                  <v-row dense v-if="user_campus.is_active == 1">
+                    <v-col cols="11">
+                      <v-select
+                        label="Nombre"
+                        v-model="user_campus.campus_id"
+                        :items="campuses"
+                        :loading="campusesLoading"
+                        item-value="id"
+                        item-title="name"
+                        variant="outlined"
+                        density="compact"
+                        :rules="rules.required"
+                      />
+                    </v-col>
+                    <v-col cols="1" class="text-right pt-2">
+                      <v-btn
+                        v-if="i !== 0"
+                        icon
+                        size="x-small"
+                        color="error"
+                        @click="userCampusesRemove(i)"
+                      >
+                        <v-icon size="x-small">mdi-minus</v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="12" class="pb-4">
+                      <v-divider />
+                    </v-col>
+                  </v-row>
+                </template>
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-btn
+                      size="x-small"
+                      color="warning"
+                      @click="userCampusesAdd()"
                     >
                       Agregar
                       <v-icon size="x-small" end>mdi-plus</v-icon>
@@ -427,8 +726,12 @@ const item = ref(null);
 const rules = getRules();
 const maritalStatuses = ref([]);
 const maritalStatusesLoading = ref(true);
+const kinships = ref([]);
+const kinshipsLoading = ref(true);
 const levels = ref([]);
 const levelsLoading = ref(true);
+const campuses = ref([]); // BORRAR DEPUES
+const campusesLoading = ref(true); // BORRAR DEPUES
 
 // Obtener catálogos
 const getCatalogs = async () => {
@@ -446,6 +749,16 @@ const getCatalogs = async () => {
   }
 
   try {
+    endpoint = `${URL_API}/kinships`;
+    response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    kinships.value = getRsp(response).data.items;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    kinshipsLoading.value = false;
+  }
+
+  try {
     endpoint = `${URL_API}/levels`;
     response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
     levels.value = getRsp(response).data.items;
@@ -454,6 +767,23 @@ const getCatalogs = async () => {
   } finally {
     levelsLoading.value = false;
   }
+
+  try {
+    // BORRAR DEPUES
+    endpoint = `${URL_API}/campuses`;
+    response = await axios.get(endpoint, {
+      params: {
+        is_active: 1,
+        filter: 0,
+      },
+      ...getHdrs(store.getAuth?.token),
+    });
+    campuses.value = getRsp(response).data.items;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    campusesLoading.value = false;
+  }
 };
 
 // Obtener datos
@@ -461,11 +791,20 @@ const getItem = async () => {
   if (isStoreMode.value) {
     item.value = {
       id: null,
+      cv_path: null,
+      cv_doc: null,
+      cv_dlt: false,
       user: getUserObj(),
       teacher_degrees: [],
     };
 
-    item.value.user.user_campuses[0].campus_id = store.getAuth?.campus_id;
+    item.value.user.user_campuses = [
+      {
+        id: null,
+        is_active: 1,
+        campus_id: null,
+      },
+    ];
 
     teacherDegreesAdd();
 
@@ -494,6 +833,9 @@ const teacherDegreesAdd = async () => {
     license_path: null,
     license_doc: null,
     license_dlt: false,
+    title_path: null,
+    title_doc: null,
+    title_dlt: false,
   });
 };
 
@@ -505,11 +847,40 @@ const teacherDegreesRemove = async (i) => {
   }
 };
 
+const userCampusesAdd = async () => {
+  item.value.user.user_campuses.push({
+    id: null,
+    is_active: 1,
+    campus_id: null,
+  });
+};
+
+const userCampusesRemove = async (i) => {
+  if (item.value.user.user_campuses[i].id === null) {
+    item.value.user.user_campuses.splice(i, 1);
+  } else {
+    item.value.user.user_campuses[i].is_active = 0;
+  }
+};
+
 // Agregar o editar
 const handleAction = async () => {
   const { valid } = await formRef.value.validate();
   if (!valid) {
     alert?.show("red-darken-1", "Revisa los detalles señalados");
+    return;
+  }
+
+  const campusIds = item.value.user.user_campuses
+    .map((v) => v.campus_id)
+    .filter(Boolean);
+  const hasDuplicates = new Set(campusIds).size !== campusIds.length;
+
+  if (hasDuplicates) {
+    alert?.show(
+      "red-darken-1",
+      "No se puede asignar el mismo campus dos veces"
+    );
     return;
   }
 
@@ -520,13 +891,16 @@ const handleAction = async () => {
 
   isLoading.value = true;
   let payload = getObj(item.value, isStoreMode.value);
-  payload = extractNestedProp(payload, "user", "curp_doc");
   payload = extractNestedProp(payload, "user", "avatar_doc");
+  payload = extractNestedProp(payload, "user", "curp_doc");
+  payload = extractNestedProp(payload, "user", "birth_certificate_doc");
+  payload = extractNestedProp(payload, "user", "ine_doc");
   payload = extractMultipleNestedProps(
     payload,
     "teacher_degrees",
     "license_doc"
   );
+  payload = extractMultipleNestedProps(payload, "teacher_degrees", "title_doc");
 
   try {
     const endpoint = `${URL_API}/${routeName}${

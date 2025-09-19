@@ -114,7 +114,6 @@
                       type="number"
                       variant="outlined"
                       density="compact"
-                      :rules="rules.required"
                     />
                   </v-col>
                   <v-col cols="12" md="3">

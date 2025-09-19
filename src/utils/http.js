@@ -41,3 +41,9 @@ export const getErr = (error) => {
 export const getRsp = (response) => {
   return response?.data;
 };
+
+export const getApi = (url) => {
+  const host = new URL(url).hostname;
+  const subdomain = host.split(".")[0];
+  return subdomain.replace(/api$/i, "");
+};

@@ -32,7 +32,7 @@
             <v-row dense>
               <v-col class="grow pt-2">El registro se encuentra inactivo</v-col>
               <v-col
-                v-if="store.getAuth?.user?.role_id === 2"
+                v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
                 class="shrink text-right"
               >
                 <v-btn
@@ -57,25 +57,11 @@
             <v-card-title>
               <v-row dense>
                 <v-col cols="11">
-                  <CardTitle :text="'DATOS GENERALES | ' + item.uiid" sub />
+                  <CardTitle text="DATOS GENERALES" sub />
                 </v-col>
-                <v-col cols="1" class="text-right">
-                  <v-btn
-                    v-if="store.getAuth?.user?.role_id === 2"
-                    icon
-                    variant="flat"
-                    size="x-small"
-                    @click.prevent="regDialog = true"
-                  >
-                    <v-icon>mdi-clock-outline</v-icon>
-                    <v-tooltip activator="parent" location="left">
-                      Registro
-                    </v-tooltip>
-                  </v-btn>
-                </v-col>
+                <v-col cols="1" class="text-right" />
               </v-row>
             </v-card-title>
-
             <v-card-text>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -94,29 +80,87 @@
                   />
                 </v-col>
                 <v-col cols="12" md="3">
-                  <VisVal
-                    label="Estado civil"
-                    :value="item.user.marital_status.name"
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
                   <VisVal label="CURP" :value="item.user.curp" />
                 </v-col>
                 <v-col cols="12" md="3">
-                  <VisDoc label="CURP (PDF)" :value="item.user.curp_b64" />
+                  <VisVal label="E-mail" :value="item.user.email" />
                 </v-col>
                 <v-col cols="12" md="3">
+                  <VisVal label="Teléfono" :value="item.user.phone" />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <VisVal
+                    label="Estado civil"
+                    :value="item.user.marital_status?.name"
+                  />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="DOCUMENTOS" sub />
+                </v-col>
+                <v-col cols="1" class="text-right" />
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row dense>
+                <v-col cols="12" md="4">
                   <VisDoc
                     label="Fotografía"
                     :value="item.user.avatar_b64"
                     img
                   />
                 </v-col>
+                <v-col cols="12" md="4">
+                  <VisDoc label="CURP (PDF)" :value="item.user.curp_b64" />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisDoc
+                    label="Acta de nacimiento  (PDF)"
+                    :value="item.user.birth_certificate_b64"
+                  />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisDoc label="INE (PDF)" :value="item.user.ine_b64" />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisDoc label="Currículum Vitae (PDF)" :value="item.cv_b64" />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="PERSONA DE CONTACTO" sub />
+                </v-col>
+                <v-col cols="1" class="text-right" />
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row dense>
                 <v-col cols="12" md="3">
-                  <VisVal label="CURP" :value="item.user.email" />
+                  <VisVal
+                    label="Parentesco"
+                    :value="item.user.contact_kinship?.name"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <VisVal label="Nombre" :value="item.user.contact_name" />
                 </v-col>
                 <v-col cols="12" md="3">
-                  <VisVal label="Teléfono" :value="item.user.phone" />
+                  <VisVal label="Teléfono" :value="item.user.contact_phone" />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -142,7 +186,7 @@
                 <v-col cols="12" md="4">
                   <VisVal
                     label="Nivel educativo"
-                    :value="teacher_degree.level.name"
+                    :value="teacher_degree.level?.name"
                   />
                 </v-col>
                 <v-col cols="12" md="4">
@@ -166,6 +210,39 @@
                     :value="teacher_degree.license_b64"
                   />
                 </v-col>
+                <v-col cols="12" md="4">
+                  <VisDoc
+                    label="Título (PDF)"
+                    :value="teacher_degree.title_b64"
+                  />
+                </v-col>
+                <v-col cols="12" class="pb-4">
+                  <v-divider />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="CAMPUS" sub />
+                </v-col>
+                <v-col cols="1" class="text-right" />
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row
+                dense
+                v-for="(user_campus, i) of item.user.user_campuses"
+                :key="i"
+              >
+                <v-col cols="12">
+                  <VisVal label="Nombre" :value="user_campus.campus?.name" />
+                </v-col>
                 <v-col cols="12" class="pb-4">
                   <v-divider />
                 </v-col>
@@ -175,7 +252,9 @@
         </v-col>
 
         <v-col
-          v-if="item.user.is_active && store.getAuth?.user?.role_id === 2"
+          v-if="
+            item.user.is_active && [1, 2].includes(store.getAuth?.user?.role_id)
+          "
           cols="12"
         >
           <v-btn

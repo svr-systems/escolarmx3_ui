@@ -3,14 +3,6 @@
     <v-card-title>
       <v-row dense>
         <v-col cols="10">
-          <BtnBack
-            :route="{
-              name: 'institutions/show',
-              params: {
-                id: getEncodeId(institutionId),
-              },
-            }"
-          />
           <CardTitle :text="route.meta.title" :icon="route.meta.icon" />
         </v-col>
         <v-col cols="2" class="text-right">
@@ -21,9 +13,6 @@
             color="success"
             :to="{
               name: `${routeName}/store`,
-              params: {
-                institution_id: getEncodeId(institutionId),
-              },
             }"
           >
             <v-icon>mdi-plus</v-icon>
@@ -128,7 +117,6 @@
                   :to="{
                     name: `${routeName}/show`,
                     params: {
-                      institution_id: getEncodeId(institutionId),
                       id: getEncodeId(item.id),
                     },
                   }"
@@ -168,7 +156,6 @@ const store = useStore();
 const route = useRoute();
 
 // Estado
-const institutionId = ref(getDecodeId(route.params.institution_id));
 const isLoading = ref(false);
 const items = ref([]);
 const search = ref("");
@@ -187,7 +174,8 @@ const filterOptions = [{ id: 0, name: "TODOS" }];
 const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
   { title: "Nombre", key: "name" },
-  { title: "ID Interno", key: "uiid", width: 120 },
+  { title: "Estado", key: "municipality.state.name" },
+  { title: "Municipio", key: "municipality.name" },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
 
@@ -197,12 +185,11 @@ const getItems = async () => {
   items.value = [];
 
   try {
-    const endpoint = `${URL_API}/institutions/${routeName}`;
+    const endpoint = `${URL_API}/${routeName}`;
     const response = await axios.get(endpoint, {
       params: {
         is_active: isActive.value,
         filter: filter.value,
-        institution_id: institutionId.value,
       },
       ...getHdrs(store.getAuth?.token),
     });
@@ -217,6 +204,6 @@ const getItems = async () => {
 
 // Cargar datos al montar
 onMounted(() => {
-  if (institutionId.value) getItems();
+  getItems();
 });
 </script>

@@ -25,7 +25,7 @@
         <v-col cols="12" md="9" class="pb-0">
           <v-row dense>
             <v-col
-              v-if="store.getAuth?.user?.role_id === 2"
+              v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
               cols="12"
               md="3"
               class="pb-0"
@@ -169,7 +169,8 @@ const filterOptions = [{ id: 0, name: "TODOS" }];
 const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
   { title: "Nombre", key: "user.full_name" },
-  { title: "ID Interno", key: "uiid", width: 120 },
+  { title: "CURP", key: "user.curp" },
+  { title: "E-mail", key: "user.email" },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
 

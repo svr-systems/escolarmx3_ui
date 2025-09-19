@@ -39,7 +39,7 @@
       <div cols="12" class="text-caption text-center">
         <span v-if="programMeta">
           {{
-            `${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
+            `${programMeta.campus.name} | ${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
           }}
         </span>
         <v-progress-circular v-else indeterminate size="12" />
@@ -50,7 +50,7 @@
             <v-row dense>
               <v-col class="grow pt-2">El registro se encuentra inactivo</v-col>
               <v-col
-                v-if="store.getAuth?.user?.role_id === 2"
+                v-if="store.getAuth?.user?.role_id === 1"
                 class="shrink text-right"
               >
                 <v-btn
@@ -79,7 +79,7 @@
                 </v-col>
                 <v-col cols="1" class="text-right">
                   <v-btn
-                    v-if="store.getAuth?.user?.role_id === 2"
+                    v-if="store.getAuth?.user?.role_id === 1"
                     icon
                     variant="flat"
                     size="x-small"
@@ -95,31 +95,31 @@
             </v-card-title>
             <v-card-text>
               <v-row dense>
-                <v-col cols="12" md="8">
+                <v-col cols="12" md="6">
                   <VisVal label="Nombre" :value="item.name" />
                 </v-col>
-                <v-col cols="12" md="2">
+                <v-col cols="12" md="3">
                   <VisVal label="Clave" :value="item.code" />
                 </v-col>
-                <v-col cols="12" md="2">
+                <v-col cols="12" md="3">
                   <VisVal label="Clave interna" :value="item.alt_code" />
                 </v-col>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="3">
                   <VisVal label="Tipo" :value="item.course_type?.name" />
                 </v-col>
-                <v-col cols="12" md="2">
+                <v-col cols="12" md="3">
                   <VisVal label="Creditos" :value="item.credits" />
                 </v-col>
-                <v-col cols="12" md="2">
+                <v-col cols="12" md="3">
                   <VisVal
                     label="Duracion de sesión (min.)"
                     :value="item.session_minutes"
                   />
                 </v-col>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="3">
                   <VisVal label="Periodo al que pertenece" :value="item.term" />
                 </v-col>
-                <v-col cols="12" md="8">
+                <v-col cols="12" md="6">
                   <VisVal
                     label="Asignatura precedente"
                     :value="
@@ -135,7 +135,7 @@
         </v-col>
 
         <v-col
-          v-if="item.is_active && store.getAuth?.user?.role_id === 2"
+          v-if="item.is_active && store.getAuth?.user?.role_id === 1"
           cols="12"
         >
           <v-btn

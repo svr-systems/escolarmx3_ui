@@ -12,55 +12,6 @@
             icon
             variant="flat"
             size="x-small"
-            color="brown"
-            class="me-1"
-            :to="{
-              name: 'student_degrees',
-              params: { student_id: getEncodeId(itemId) },
-            }"
-          >
-            <v-icon>mdi-history</v-icon>
-            <v-tooltip activator="parent" location="left"
-              >Estudios previos</v-tooltip
-            >
-          </v-btn>
-          <v-btn
-            v-if="item.user.is_active"
-            icon
-            variant="flat"
-            size="x-small"
-            color="info"
-            class="me-1"
-            :to="{
-              name: 'student_documents',
-              params: { student_id: getEncodeId(itemId) },
-            }"
-          >
-            <v-icon>mdi-folder</v-icon>
-            <v-tooltip activator="parent" location="left"
-              >Documentación</v-tooltip
-            >
-          </v-btn>
-          <v-btn
-            v-if="item.user.is_active"
-            icon
-            variant="flat"
-            size="x-small"
-            color="pink"
-            class="me-1"
-            :to="{
-              name: 'student_programs',
-              params: { student_id: getEncodeId(itemId) },
-            }"
-          >
-            <v-icon>mdi-school</v-icon>
-            <v-tooltip activator="parent" location="left">Carreras</v-tooltip>
-          </v-btn>
-          <v-btn
-            v-if="item.user.is_active"
-            icon
-            variant="flat"
-            size="x-small"
             color="warning"
             :to="{
               name: `${routeName}/update`,
@@ -81,7 +32,7 @@
             <v-row dense>
               <v-col class="grow pt-2">El registro se encuentra inactivo</v-col>
               <v-col
-                v-if="store.getAuth?.user?.role_id === 2"
+                v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
                 class="shrink text-right"
               >
                 <v-btn
@@ -106,25 +57,11 @@
             <v-card-title>
               <v-row dense>
                 <v-col cols="11">
-                  <CardTitle :text="'DATOS GENERALES | ' + item.uiid" sub />
+                  <CardTitle text="DATOS GENERALES" sub />
                 </v-col>
-                <v-col cols="1" class="text-right">
-                  <v-btn
-                    v-if="store.getAuth?.user?.role_id === 2"
-                    icon
-                    variant="flat"
-                    size="x-small"
-                    @click.prevent="regDialog = true"
-                  >
-                    <v-icon>mdi-clock-outline</v-icon>
-                    <v-tooltip activator="parent" location="left">
-                      Registro
-                    </v-tooltip>
-                  </v-btn>
-                </v-col>
+                <v-col cols="1" class="text-right" />
               </v-row>
             </v-card-title>
-
             <v-card-text>
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -143,34 +80,24 @@
                   />
                 </v-col>
                 <v-col cols="12" md="3">
-                  <VisVal
-                    label="Estado civil"
-                    :value="item.user.marital_status.name"
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
                   <VisVal label="CURP" :value="item.user.curp" />
                 </v-col>
                 <v-col cols="12" md="3">
-                  <VisDoc label="CURP (PDF)" :value="item.user.curp_b64" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisDoc
-                    label="Fotografía"
-                    :value="item.user.avatar_b64"
-                    img
-                  />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="CURP" :value="item.user.email" />
+                  <VisVal label="E-mail" :value="item.user.email" />
                 </v-col>
                 <v-col cols="12" md="3">
                   <VisVal label="Teléfono" :value="item.user.phone" />
                 </v-col>
                 <v-col cols="12" md="3">
-                  <VisDoc
-                    label="Acta de nacimiento (PDF)"
-                    :value="item.birth_certificate_b64"
+                  <VisVal
+                    label="Estado civil"
+                    :value="item.user.marital_status?.name"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <VisVal
+                    label="Núm. de matrícula"
+                    :value="item.student_number"
                   />
                 </v-col>
               </v-row>
@@ -183,7 +110,43 @@
             <v-card-title>
               <v-row dense>
                 <v-col cols="11">
-                  <CardTitle text="TUTOR" sub />
+                  <CardTitle text="DOCUMENTOS" sub />
+                </v-col>
+                <v-col cols="1" class="text-right" />
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row dense>
+                <v-col cols="12" md="3">
+                  <VisDoc
+                    label="Fotografía"
+                    :value="item.user.avatar_b64"
+                    img
+                  />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <VisDoc label="CURP (PDF)" :value="item.user.curp_b64" />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <VisDoc
+                    label="Acta de nacimiento  (PDF)"
+                    :value="item.user.birth_certificate_b64"
+                  />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <VisDoc label="INE (PDF)" :value="item.user.ine_b64" />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="PERSONA DE CONTACTO" sub />
                 </v-col>
                 <v-col cols="1" class="text-right" />
               </v-row>
@@ -193,14 +156,199 @@
                 <v-col cols="12" md="3">
                   <VisVal
                     label="Parentesco"
-                    :value="item.guardian_kinship.name"
+                    :value="item.user.contact_kinship?.name"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
-                  <VisVal label="Nombre" :value="item.guardian_name" />
+                  <VisVal label="Nombre" :value="item.user.contact_name" />
                 </v-col>
                 <v-col cols="12" md="3">
-                  <VisVal label="Teléfono" :value="item.guardian_phone" />
+                  <VisVal label="Teléfono" :value="item.user.contact_phone" />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="ESTUDIOS PREVIOS" sub />
+                </v-col>
+                <v-col cols="1" class="text-right">
+                  <v-btn
+                    v-if="item.user.is_active"
+                    icon
+                    variant="flat"
+                    size="x-small"
+                    color="brown"
+                    :to="{
+                      name: 'student_degrees',
+                      params: { student_id: getEncodeId(itemId) },
+                    }"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
+                    <v-tooltip activator="parent" location="left">
+                      Editar
+                    </v-tooltip>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row v-for="student_degree in item.student_degrees" dense>
+                <v-col cols="12" md="4">
+                  <VisVal
+                    label="Nivel educativo"
+                    :value="student_degree.level?.name"
+                  />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisVal
+                    label="Institución educativa"
+                    :value="student_degree.institution_name"
+                  />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisVal label="Carrera" :value="student_degree.name" />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisVal
+                    label="Estado | Municipio"
+                    :value="student_degree.municipality_state"
+                  />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisVal label="Periodo" :value="student_degree.term" />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <VisVal
+                    label="Núm. cédula"
+                    :value="student_degree.license_number"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <v-divider />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="EXPEDIENTE" sub />
+                </v-col>
+                <v-col cols="1" class="text-right">
+                  <v-btn
+                    v-if="item.user.is_active"
+                    icon
+                    variant="flat"
+                    size="x-small"
+                    color="info"
+                    :to="{
+                      name: 'student_documents',
+                      params: { student_id: getEncodeId(itemId) },
+                    }"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
+                    <v-tooltip activator="parent" location="left">
+                      Editar
+                    </v-tooltip>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row v-for="student_document in item.student_documents" dense>
+                <v-col cols="12" md="2">
+                  <VisVal
+                    label="Fecha de recepción"
+                    :value="student_document.received_at"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <VisVal
+                    label="Tipo"
+                    :value="student_document.document_type?.name"
+                  />
+                </v-col>
+                <v-col cols="12" md="2">
+                  <VisVal
+                    label="¿Deja original?"
+                    :value="student_document.is_original_left"
+                    :bool="true"
+                  />
+                </v-col>
+                <v-col cols="12" md="2">
+                  <VisVal
+                    label="Número de copias"
+                    :value="student_document.copies_count"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <v-divider />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="CARRERAS" sub />
+                </v-col>
+                <v-col cols="1" class="text-right">
+                  <v-btn
+                    v-if="item.user.is_active"
+                    icon
+                    variant="flat"
+                    size="x-small"
+                    color="pink"
+                    class="me-1"
+                    :to="{
+                      name: 'student_programs',
+                      params: { student_id: getEncodeId(itemId) },
+                    }"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
+                    <v-tooltip activator="parent" location="left">
+                      Editar
+                    </v-tooltip>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row v-for="student_program in item.student_programs" dense>
+                <v-col cols="12" md="3">
+                  <VisVal
+                    label="Nivel educativo"
+                    :value="student_program.program?.level?.name"
+                  />
+                </v-col>
+                <v-col cols="12" md="7">
+                  <VisVal
+                    label="Carrera"
+                    :value="student_program.program?.name_code"
+                  />
+                </v-col>
+                <v-col cols="12" md="2">
+                  <VisVal
+                    label="Ciclo de ingreso"
+                    :value="student_program.cycle_entry?.code"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <v-divider />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -208,7 +356,9 @@
         </v-col>
 
         <v-col
-          v-if="item.user.is_active && store.getAuth?.user?.role_id === 2"
+          v-if="
+            item.user.is_active && [1, 2].includes(store.getAuth?.user?.role_id)
+          "
           cols="12"
         >
           <v-btn

@@ -34,7 +34,21 @@
               </v-card-title>
               <v-card-text>
                 <v-row dense>
-                  <v-col cols="12" md="8">
+                  <v-col cols="12" md="4">
+                    <!-- BORRAR DESPUES -->
+                    <v-select
+                      label="Campus"
+                      v-model="item.campus_id"
+                      :items="campuses"
+                      :loading="campusesLoading"
+                      item-value="id"
+                      item-title="name"
+                      variant="outlined"
+                      density="compact"
+                      :rules="rules.required"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="4">
                     <v-text-field
                       label="Nombre"
                       v-model="item.name"
@@ -53,7 +67,7 @@
                       type="text"
                       variant="outlined"
                       density="compact"
-                      maxlength="10"
+                      maxlength="15"
                       counter
                       :rules="rules.textRequired"
                     />
@@ -285,6 +299,8 @@ const isLoading = ref(true);
 const formRef = ref(null);
 const item = ref(null);
 const rules = getRules();
+const campuses = ref([]); // BORRAR DEPUES
+const campusesLoading = ref(true); // BORRAR DEPUES
 const accreditations = ref([]);
 const accreditationsLoading = ref(true);
 const modalities = ref([]);
@@ -300,6 +316,23 @@ const termsLoading = ref(true);
 const getCatalogs = async () => {
   let endpoint = null;
   let response = null;
+
+  try {
+    // BORRAR DEPUES
+    endpoint = `${URL_API}/campuses`;
+    response = await axios.get(endpoint, {
+      params: {
+        is_active: 1,
+        filter: 0,
+      },
+      ...getHdrs(store.getAuth?.token),
+    });
+    campuses.value = getRsp(response).data.items;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    campusesLoading.value = false;
+  }
 
   try {
     endpoint = `${URL_API}/accreditations`;
@@ -340,7 +373,7 @@ const getCatalogs = async () => {
   } finally {
     levelsLoading.value = false;
   }
-  
+
   try {
     endpoint = `${URL_API}/terms`;
     response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
@@ -358,7 +391,7 @@ const getItem = async () => {
     item.value = {
       id: null,
       is_active: 1,
-      campus_id: store.getAuth?.campus_id,
+      campus_id: null,
       name: null,
       code: null,
       issued_at: currentDate.value,

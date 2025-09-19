@@ -7,7 +7,6 @@
             :route="{
               name: routeName + (!isStoreMode ? '/show' : ''),
               params: {
-                institution_id: getEncodeId(institutionId),
                 id: getEncodeId(itemId),
               },
             }"
@@ -45,7 +44,7 @@
                       type="text"
                       variant="outlined"
                       density="compact"
-                      maxlength="50"
+                      maxlength="100"
                       counter
                       :rules="rules.textRequired"
                     />
@@ -146,7 +145,6 @@ const router = useRouter();
 const route = useRoute();
 
 // Estado reactivo
-const institutionId = ref(getDecodeId(route.params.institution_id));
 const itemId = ref(route.params.id ? getDecodeId(route.params.id) : null);
 const isStoreMode = ref(!itemId.value);
 const isLoading = ref(true);
@@ -190,7 +188,7 @@ const getItem = async () => {
     isLoading.value = false;
   } else {
     try {
-      const endpoint = `${URL_API}/institutions/${routeName}/${itemId.value}`;
+      const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
       const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
       item.value = getRsp(response).data.item;
 
@@ -240,10 +238,9 @@ const handleAction = async () => {
 
   isLoading.value = true;
   const payload = getObj(item.value, isStoreMode.value);
-  payload.institution_id = institutionId.value;
 
   try {
-    const endpoint = `${URL_API}/institutions/${routeName}${
+    const endpoint = `${URL_API}/${routeName}${
       !isStoreMode.value ? `/${payload.id}` : ""
     }`;
     const response = getRsp(

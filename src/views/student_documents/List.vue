@@ -44,7 +44,7 @@
         <v-col cols="12" md="9" class="pb-0">
           <v-row dense>
             <v-col
-              v-if="store.getAuth?.user?.role_id === 2"
+              v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
               cols="12"
               md="3"
               class="pb-0"
@@ -113,15 +113,8 @@
               <b>{{ item.key + 1 }}</b>
             </template>
 
-            <template #item.email_verified_at="{ item }">
-              <v-icon
-                size="x-small"
-                :color="item.email_verified_at ? 'info' : ''"
-              >
-                mdi-checkbox-blank-circle{{
-                  item.email_verified_at ? "" : "-outline"
-                }}
-              </v-icon>
+            <template #item.is_original_left="{ item }">
+              <VisVal label="" :value="item.is_original_left" :bool="true" />
             </template>
 
             <template #item.action="{ item }">
@@ -166,6 +159,7 @@ import { getHdrs, getErr, getRsp } from "@/utils/http";
 import { getDecodeId, getEncodeId } from "@/utils/coders";
 import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
+import VisVal from "@/components/VisVal.vue";
 
 // Constantes
 const routeName = "student_documents";
@@ -195,7 +189,8 @@ const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
   { title: "Fecha de recepción", key: "received_at" },
   { title: "Tipo", key: "document_type.name" },
-  { title: "ID Interno", key: "uiid", width: 120 },
+  { title: "¿Deja original?", key: "is_original_left" },
+  { title: "Número de copias", key: "copies_count" },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
 

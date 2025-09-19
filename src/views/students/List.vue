@@ -25,7 +25,7 @@
         <v-col cols="12" md="9" class="pb-0">
           <v-row dense>
             <v-col
-              v-if="store.getAuth?.user?.role_id === 2"
+              v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
               cols="12"
               md="3"
               class="pb-0"
@@ -41,15 +41,21 @@
                 :disabled="!isItemsEmpty"
               />
             </v-col>
-            <v-col cols="12" md="3" class="pb-0">
-              <v-select
-                v-model="filter"
-                label="Filtro"
+            <v-col cols="12" md="9" class="pb-0">
+              <v-autocomplete
+                label="Carrera"
+                v-model="program_id"
+                :items="programs"
+                :loading="programsLoading"
+                item-value="id"
+                :item-title="
+                  (i) =>
+                    i.id
+                      ? `${i.campus.name} | ${i.name} | ${i.code} | ${i.plan_year}`
+                      : i.name
+                "
                 variant="outlined"
                 density="compact"
-                :items="filterOptions"
-                item-title="name"
-                item-value="id"
                 :disabled="!isItemsEmpty"
               />
             </v-col>
@@ -94,15 +100,10 @@
               <b>{{ item.key + 1 }}</b>
             </template>
 
-            <template #item.email_verified_at="{ item }">
-              <v-icon
-                size="x-small"
-                :color="item.email_verified_at ? 'info' : ''"
-              >
-                mdi-checkbox-blank-circle{{
-                  item.email_verified_at ? "" : "-outline"
-                }}
-              </v-icon>
+            <template #item.lab_programs="{ item }">
+              <span class="text-description">
+                {{ item.lab_programs }}
+              </span>
             </template>
 
             <template #item.action="{ item }">
@@ -155,7 +156,9 @@ const isLoading = ref(false);
 const items = ref([]);
 const search = ref("");
 const isActive = ref(1);
-const filter = ref(0);
+const program_id = ref(0);
+const programs = ref([]);
+const programsLoading = ref(true);
 
 const isItemsEmpty = computed(() => items.value.length === 0);
 
@@ -168,11 +171,44 @@ const filterOptions = [{ id: 0, name: "TODOS" }];
 
 const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
-  { title: "Nombre", key: "user.full_name" },
-  { title: "CURP", key: "user.curp" },
-  { title: "ID Interno", key: "uiid", width: 120 },
+  { title: "Nombre", key: "full_name" },
+  { title: "CURP", key: "curp" },
+  { title: "E-mail", key: "email" },
+  { title: "Carrera", key: "lab_programs" },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
+
+// Obtener catálogos
+const getCatalogs = async () => {
+  let endpoint = null;
+  let response = null;
+
+  try {
+    endpoint = `${URL_API}/programs`;
+    response = await axios.get(endpoint, {
+      params: {
+        is_active: 1,
+        filter: 0,
+        campus_id: 0,
+      },
+      ...getHdrs(store.getAuth?.token),
+    });
+    programs.value = getRsp(response).data.items;
+    programs.value.push({
+      id: 0,
+      name: "TODAS",
+      code: null,
+      plan_year: null,
+      campus: {
+        name: null,
+      },
+    });
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    programsLoading.value = false;
+  }
+};
 
 // Cargar registros
 const getItems = async () => {
@@ -184,8 +220,7 @@ const getItems = async () => {
     const response = await axios.get(endpoint, {
       params: {
         is_active: isActive.value,
-        filter: filter.value,
-        campus_id: store.getAuth?.campus_id,
+        program_id: program_id.value,
       },
       ...getHdrs(store.getAuth?.token),
     });
@@ -199,6 +234,6 @@ const getItems = async () => {
 
 // Cargar datos al montar
 onMounted(() => {
-  getItems();
+  getCatalogs();
 });
 </script>

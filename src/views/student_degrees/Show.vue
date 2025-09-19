@@ -48,7 +48,7 @@
             <v-row dense>
               <v-col class="grow pt-2">El registro se encuentra inactivo</v-col>
               <v-col
-                v-if="store.getAuth?.user?.role_id === 2"
+                v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
                 class="shrink text-right"
               >
                 <v-btn
@@ -77,7 +77,7 @@
                 </v-col>
                 <v-col cols="1" class="text-right">
                   <v-btn
-                    v-if="store.getAuth?.user?.role_id === 2"
+                    v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
                     icon
                     variant="flat"
                     size="x-small"
@@ -142,7 +142,7 @@
         </v-col>
 
         <v-col
-          v-if="item.is_active && store.getAuth?.user?.role_id === 2"
+          v-if="item.is_active && [1, 2].includes(store.getAuth?.user?.role_id)"
           cols="12"
         >
           <v-btn

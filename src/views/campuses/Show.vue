@@ -6,9 +6,6 @@
           <BtnBack
             :route="{
               name: routeName,
-              params: {
-                institution_id: getEncodeId(institutionId),
-              },
             }"
           />
           <CardTitle :text="route.meta.title" :icon="route.meta.icon" />
@@ -23,7 +20,6 @@
             :to="{
               name: `${routeName}/update`,
               params: {
-                institution_id: getEncodeId(institutionId),
                 id: getEncodeId(itemId),
               },
             }"
@@ -159,7 +155,6 @@ const router = useRouter();
 const route = useRoute();
 
 // Estado reactivo
-const institutionId = ref(getDecodeId(route.params.institution_id));
 const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);
@@ -169,7 +164,7 @@ const regDialog = ref(false);
 const getItem = async () => {
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/institutions/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
     const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
     item.value = getRsp(response).data.item;
   } catch (err) {
@@ -186,7 +181,7 @@ const deleteItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/institutions/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
     const response = getRsp(
       await axios.delete(endpoint, getHdrs(store.getAuth?.token))
     );
@@ -207,7 +202,7 @@ const restoreItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/institutions/${routeName}/restore`;
+    const endpoint = `${URL_API}/${routeName}/restore`;
     const response = getRsp(
       await axios.post(
         endpoint,

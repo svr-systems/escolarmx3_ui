@@ -12,7 +12,7 @@ const routes = [
     meta: {
       title: "Alumno | Carreras",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -22,7 +22,7 @@ const routes = [
     meta: {
       title: "Alumno | Carrera | Agregar",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -33,7 +33,7 @@ const routes = [
     meta: {
       title: "Alumno | Carrera",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -44,50 +44,50 @@ const routes = [
     meta: {
       title: "Alumno | Carrera | Editar",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //student_documents
   {
-    path: "/alumnos/:student_id/documentos",
+    path: "/alumnos/:student_id/expediente",
     name: "student_documents",
     component: () => import("@/views/student_documents/List.vue"),
     meta: {
-      title: "Alumno | Documentos",
+      title: "Alumno | Expediente",
       icon: "mdi-folder",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
-    path: "/alumnos/:student_id/documentos/agregar",
+    path: "/alumnos/:student_id/expediente/agregar",
     name: "student_documents/store",
     component: () => import("@/views/student_documents/Form.vue"),
     meta: {
-      title: "Alumno | Documento | Agregar",
+      title: "Alumno | Expediente | Agregar",
       icon: "mdi-folder",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
-    path: "/alumnos/:student_id/documentos/:id",
+    path: "/alumnos/:student_id/expediente/:id",
     name: "student_documents/show",
     component: () => import("@/views/student_documents/Show.vue"),
     props: true,
     meta: {
-      title: "Alumno | Documento",
+      title: "Alumno | Expediente",
       icon: "mdi-folder",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
-    path: "/alumnos/:student_id/documentos/:id/editar",
+    path: "/alumnos/:student_id/expediente/:id/editar",
     name: "student_documents/update",
     component: () => import("@/views/student_documents/Form.vue"),
     props: true,
     meta: {
-      title: "Alumno | Documento | Editar",
+      title: "Alumno | Expediente | Editar",
       icon: "mdi-folder",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //student_degrees
@@ -98,7 +98,7 @@ const routes = [
     meta: {
       title: "Alumno | Estudios previos",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -108,7 +108,7 @@ const routes = [
     meta: {
       title: "Alumno | Estudio previos | Agregar",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -119,7 +119,7 @@ const routes = [
     meta: {
       title: "Alumno | Estudio previos",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -130,7 +130,7 @@ const routes = [
     meta: {
       title: "Alumno | Estudio previos | Editar",
       icon: "mdi-history",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //students
@@ -141,7 +141,7 @@ const routes = [
     meta: {
       title: "Alumnos",
       icon: "mdi-account-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -151,7 +151,7 @@ const routes = [
     meta: {
       title: "Alumno | Agregar",
       icon: "mdi-account-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -162,7 +162,7 @@ const routes = [
     meta: {
       title: "Alumno",
       icon: "mdi-account-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -173,7 +173,7 @@ const routes = [
     meta: {
       title: "Alumno | Editar",
       icon: "mdi-account-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //cycles
@@ -184,7 +184,7 @@ const routes = [
     meta: {
       title: "Ciclos",
       icon: "mdi-calendar-blank",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -194,7 +194,7 @@ const routes = [
     meta: {
       title: "Ciclo | Agregar",
       icon: "mdi-calendar-blank",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -205,7 +205,7 @@ const routes = [
     meta: {
       title: "Ciclo",
       icon: "mdi-calendar-blank",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -216,7 +216,7 @@ const routes = [
     meta: {
       title: "Ciclo | Editar",
       icon: "mdi-calendar-blank",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //teachers
@@ -227,7 +227,7 @@ const routes = [
     meta: {
       title: "Docentes",
       icon: "mdi-human-male-board",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -237,7 +237,7 @@ const routes = [
     meta: {
       title: "Docente | Agregar",
       icon: "mdi-human-male-board",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -248,7 +248,7 @@ const routes = [
     meta: {
       title: "Docente",
       icon: "mdi-human-male-board",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -259,7 +259,7 @@ const routes = [
     meta: {
       title: "Docente | Editar",
       icon: "mdi-human-male-board",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //courses
@@ -270,7 +270,7 @@ const routes = [
     meta: {
       title: "Asignaturas",
       icon: "mdi-book-open-variant",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -280,7 +280,7 @@ const routes = [
     meta: {
       title: "Asignatura | Agregar",
       icon: "mdi-book-open-variant",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -291,7 +291,7 @@ const routes = [
     meta: {
       title: "Asignatura",
       icon: "mdi-book-open-variant",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -302,7 +302,7 @@ const routes = [
     meta: {
       title: "Asignatura | Editar",
       icon: "mdi-book-open-variant",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //programs
@@ -313,7 +313,7 @@ const routes = [
     meta: {
       title: "Carreras",
       icon: "mdi-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -323,7 +323,7 @@ const routes = [
     meta: {
       title: "Carrera | Agregar",
       icon: "mdi-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -334,7 +334,7 @@ const routes = [
     meta: {
       title: "Carrera",
       icon: "mdi-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   {
@@ -345,12 +345,12 @@ const routes = [
     meta: {
       title: "Carrera | Editar",
       icon: "mdi-school",
-      middleware: [Auth, Roles([2])],
+      middleware: [Auth, Roles([1, 2])],
     },
   },
   //campuses
   {
-    path: "/instituciones/:institution_id/campus",
+    path: "/campus",
     name: "campuses",
     component: () => import("@/views/campuses/List.vue"),
     meta: {
@@ -360,7 +360,7 @@ const routes = [
     },
   },
   {
-    path: "/instituciones/:institution_id/campus/agregar",
+    path: "/campus/agregar",
     name: "campuses/store",
     component: () => import("@/views/campuses/Form.vue"),
     meta: {
@@ -370,7 +370,7 @@ const routes = [
     },
   },
   {
-    path: "/instituciones/:institution_id/campus/:id",
+    path: "/campus/:id",
     name: "campuses/show",
     component: () => import("@/views/campuses/Show.vue"),
     props: true,
@@ -381,7 +381,7 @@ const routes = [
     },
   },
   {
-    path: "/instituciones/:institution_id/campus/:id/editar",
+    path: "/campus/:id/editar",
     name: "campuses/update",
     component: () => import("@/views/campuses/Form.vue"),
     props: true,
@@ -391,46 +391,26 @@ const routes = [
       middleware: [Auth, Roles([1, 2])],
     },
   },
-  //institutions
+  //settitngs
   {
-    path: "/instituciones",
-    name: "institutions",
-    component: () => import("@/views/institutions/List.vue"),
-    meta: {
-      title: "Instituciones",
-      icon: "mdi-office-building",
-      middleware: [Auth, Roles([1, 2])],
-    },
-  },
-  {
-    path: "/instituciones/agregar",
-    name: "institutions/store",
-    component: () => import("@/views/institutions/Form.vue"),
-    meta: {
-      title: "Institución | Agregar",
-      icon: "mdi-office-building",
-      middleware: [Auth, Roles([1, 2])],
-    },
-  },
-  {
-    path: "/instituciones/:id",
-    name: "institutions/show",
-    component: () => import("@/views/institutions/Show.vue"),
+    path: "/configuracion",
+    name: "settings/show",
+    component: () => import("@/views/settings/Show.vue"),
     props: true,
     meta: {
-      title: "Institución",
-      icon: "mdi-office-building",
+      title: "Configuración",
+      icon: "mdi-cog",
       middleware: [Auth, Roles([1, 2])],
     },
   },
   {
-    path: "/instituciones/:id/editar",
-    name: "institutions/update",
-    component: () => import("@/views/institutions/Form.vue"),
+    path: "/configuracion/editar",
+    name: "settings/update",
+    component: () => import("@/views/settings/Form.vue"),
     props: true,
     meta: {
-      title: "Institución | Editar",
-      icon: "mdi-office-building",
+      title: "Configuración | Editar",
+      icon: "mdi-cog",
       middleware: [Auth, Roles([1, 2])],
     },
   },

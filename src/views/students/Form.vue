@@ -22,12 +22,7 @@
               <v-card-title>
                 <v-row dense>
                   <v-col cols="11">
-                    <CardTitle
-                      :text="`DATOS GENERALES${
-                        isStoreMode ? '' : ' | ' + (item.uiid || '')
-                      }`"
-                      sub
-                    />
+                    <CardTitle text="DATOS GENERALES" sub />
                   </v-col>
                   <v-col cols="1" class="text-right" />
                 </v-row>
@@ -71,19 +66,6 @@
                     />
                   </v-col>
                   <v-col cols="12" md="3">
-                    <v-select
-                      label="Estado civil"
-                      v-model="item.user.marital_status_id"
-                      :items="maritalStatuses"
-                      :loading="maritalStatusesLoading"
-                      item-value="id"
-                      item-title="name"
-                      variant="outlined"
-                      density="compact"
-                      :rules="rules.required"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="3">
                     <v-text-field
                       label="CURP"
                       v-model="item.user.curp"
@@ -94,6 +76,116 @@
                       counter
                       :rules="rules.curpRequired"
                     />
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      label="E-mail"
+                      v-model="item.user.email"
+                      type="text"
+                      variant="outlined"
+                      density="compact"
+                      maxlength="65"
+                      counter
+                      :rules="rules.emailRequired"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      label="Teléfono"
+                      v-model="item.user.phone"
+                      type="text"
+                      variant="outlined"
+                      density="compact"
+                      maxlength="10"
+                      counter
+                      :rules="rules.phoneRequired"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-select
+                      label="Estado civil*"
+                      v-model="item.user.marital_status_id"
+                      :items="maritalStatuses"
+                      :loading="maritalStatusesLoading"
+                      item-value="id"
+                      item-title="name"
+                      variant="outlined"
+                      density="compact"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      label="Núm. de matrícula*"
+                      v-model="item.student_number"
+                      type="text"
+                      variant="outlined"
+                      density="compact"
+                      maxlength="15"
+                      counter
+                      :rules="rules.textOptional"
+                    />
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12">
+            <v-card>
+              <v-card-title>
+                <v-row dense>
+                  <v-col cols="11">
+                    <CardTitle text="DOCUMENTOS" sub />
+                  </v-col>
+                  <v-col cols="1" class="text-right" />
+                </v-row>
+              </v-card-title>
+              <v-card-text>
+                <v-row dense>
+                  <v-col cols="12" md="3" class="d-flex">
+                    <v-file-input
+                      label="Fotografía*"
+                      v-model="item.user.avatar_doc"
+                      variant="outlined"
+                      density="compact"
+                      prepend-icon=""
+                      show-size
+                      accept=".jpg,.jpeg,.png"
+                      :rules="rules.imageOptional"
+                      :disabled="item.user.avatar_dlt"
+                    />
+                    <div
+                      v-if="
+                        !isStoreMode &&
+                        item.user.avatar_path &&
+                        !item.user.avatar_doc
+                      "
+                    >
+                      <BtnDwd
+                        :value="item.user.avatar_b64"
+                        :disabled="item.user.avatar_dlt"
+                      />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="item.user.avatar_dlt ? 'error' : undefined"
+                        @click.prevent="
+                          item.user.avatar_dlt = !item.user.avatar_dlt
+                        "
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{ item.user.avatar_dlt ? "-off" : "" }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.user.avatar_dlt
+                              ? "Revertir eliminación"
+                              : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
                   </v-col>
                   <v-col cols="12" md="3" class="d-flex">
                     <v-file-input
@@ -142,116 +234,47 @@
                   </v-col>
                   <v-col cols="12" md="3" class="d-flex">
                     <v-file-input
-                      label="Fotografía*"
-                      v-model="item.user.avatar_doc"
-                      variant="outlined"
-                      density="compact"
-                      prepend-icon=""
-                      show-size
-                      accept=".jpg,.jpeg,.png"
-                      :rules="rules.imageOptional"
-                      :disabled="item.user.avatar_dlt"
-                    />
-                    <div
-                      v-if="
-                        !isStoreMode &&
-                        item.user.avatar_path &&
-                        !item.user.avatar_doc
-                      "
-                    >
-                      <BtnDwd
-                        :value="item.user.avatar_b64"
-                        :disabled="item.user.avatar_dlt"
-                      />
-                      <v-btn
-                        icon
-                        variant="text"
-                        size="small"
-                        :color="item.user.avatar_dlt ? 'error' : undefined"
-                        @click.prevent="
-                          item.user.avatar_dlt = !item.user.avatar_dlt
-                        "
-                      >
-                        <v-icon size="small">
-                          mdi-delete{{ item.user.avatar_dlt ? "-off" : "" }}
-                        </v-icon>
-                        <v-tooltip activator="parent" location="bottom">
-                          {{
-                            item.user.avatar_dlt
-                              ? "Revertir eliminación"
-                              : "Eliminar"
-                          }}
-                        </v-tooltip>
-                      </v-btn>
-                    </div>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      label="E-mail"
-                      v-model="item.user.email"
-                      type="text"
-                      variant="outlined"
-                      density="compact"
-                      maxlength="65"
-                      counter
-                      :rules="rules.emailRequired"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <v-text-field
-                      label="Teléfono"
-                      v-model="item.user.phone"
-                      type="text"
-                      variant="outlined"
-                      density="compact"
-                      maxlength="10"
-                      counter
-                      :rules="rules.phoneRequired"
-                    />
-                  </v-col>
-                  <v-col cols="12" md="3" class="d-flex">
-                    <v-file-input
                       label="Acta de nacimiento (PDF)*"
-                      v-model="item.birth_certificate_doc"
+                      v-model="item.user.birth_certificate_doc"
                       variant="outlined"
                       density="compact"
                       prepend-icon=""
                       show-size
                       accept=".pdf"
                       :rules="rules.fileOptional"
-                      :disabled="item.birth_certificate_dlt"
+                      :disabled="item.user.birth_certificate_dlt"
                     />
                     <div
                       v-if="
                         !isStoreMode &&
-                        item.birth_certificate_path &&
-                        !item.birth_certificate_doc
+                        item.user.birth_certificate_path &&
+                        !item.user.birth_certificate_doc
                       "
                     >
                       <BtnDwd
-                        :value="item.birth_certificate_b64"
-                        :disabled="item.birth_certificate_dlt"
+                        :value="item.user.birth_certificate_b64"
+                        :disabled="item.user.birth_certificate_dlt"
                       />
                       <v-btn
                         icon
                         variant="text"
                         size="small"
                         :color="
-                          item.birth_certificate_dlt ? 'error' : undefined
+                          item.user.birth_certificate_dlt ? 'error' : undefined
                         "
                         @click.prevent="
-                          item.birth_certificate_dlt =
-                            !item.birth_certificate_dlt
+                          item.user.birth_certificate_dlt =
+                            !item.user.birth_certificate_dlt
                         "
                       >
                         <v-icon size="small">
                           mdi-delete{{
-                            item.birth_certificate_dlt ? "-off" : ""
+                            item.user.birth_certificate_dlt ? "-off" : ""
                           }}
                         </v-icon>
                         <v-tooltip activator="parent" location="bottom">
                           {{
-                            item.birth_certificate_dlt
+                            item.user.birth_certificate_dlt
                               ? "Revertir eliminación"
                               : "Eliminar"
                           }}
@@ -259,17 +282,46 @@
                       </v-btn>
                     </div>
                   </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      label="Núm. de matrícula (No necesaria para el sistema)*"
-                      v-model="item.student_number"
-                      type="text"
+                  <v-col cols="12" md="3" class="d-flex">
+                    <v-file-input
+                      label="INE (PDF)*"
+                      v-model="item.user.ine_doc"
                       variant="outlined"
                       density="compact"
-                      maxlength="15"
-                      counter
-                      :rules="rules.textOptional"
+                      prepend-icon=""
+                      show-size
+                      accept=".pdf"
+                      :rules="rules.fileOptional"
+                      :disabled="item.user.ine_dlt"
                     />
+                    <div
+                      v-if="
+                        !isStoreMode && item.user.ine_path && !item.user.ine_doc
+                      "
+                    >
+                      <BtnDwd
+                        :value="item.user.ine_b64"
+                        :disabled="item.user.ine_dlt"
+                      />
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="small"
+                        :color="item.user.ine_dlt ? 'error' : undefined"
+                        @click.prevent="item.user.ine_dlt = !item.user.ine_dlt"
+                      >
+                        <v-icon size="small">
+                          mdi-delete{{ item.user.ine_dlt ? "-off" : "" }}
+                        </v-icon>
+                        <v-tooltip activator="parent" location="bottom">
+                          {{
+                            item.user.ine_dlt
+                              ? "Revertir eliminación"
+                              : "Eliminar"
+                          }}
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -281,7 +333,7 @@
               <v-card-title>
                 <v-row dense>
                   <v-col cols="11">
-                    <CardTitle text="TUTOR" sub />
+                    <CardTitle text="PERSONA DE CONTACTO" sub />
                   </v-col>
                   <v-col cols="1" class="text-right" />
                 </v-row>
@@ -289,9 +341,9 @@
               <v-card-text>
                 <v-row dense>
                   <v-col cols="12" md="3">
-                    <v-select
+                    <v-autocomplete
                       label="Parentesco*"
-                      v-model="item.guardian_kinship_id"
+                      v-model="item.user.contact_kinship_id"
                       :items="kinships"
                       :loading="kinshipsLoading"
                       item-value="id"
@@ -303,18 +355,19 @@
                   <v-col cols="12" md="6">
                     <v-text-field
                       label="Nombre*"
-                      v-model="item.guardian_name"
+                      v-model="item.user.contact_name"
                       type="text"
                       variant="outlined"
                       density="compact"
                       maxlength="100"
                       counter
+                      :rules="rules.textOptional"
                     />
                   </v-col>
                   <v-col cols="12" md="3">
                     <v-text-field
-                      label="Teléfono*"
-                      v-model="item.guardian_phone"
+                      label="Teléfono"
+                      v-model="item.user.contact_phone"
                       type="text"
                       variant="outlined"
                       density="compact"
@@ -424,17 +477,10 @@ const getItem = async () => {
   if (isStoreMode.value) {
     item.value = {
       id: null,
-      user: getUserObj(),
       student_number: null,
-      guardian_kinship_id: null,
-      guardian_name: null,
-      guardian_phone: null,
-      birth_certificate_path: null,
-      birth_certificate_doc: null,
-      birth_certificate_dlt: false,
+      user: getUserObj(),
     };
 
-    item.value.user.user_campuses[0].campus_id = store.getAuth?.campus_id;
     isLoading.value = false;
   } else {
     try {
@@ -464,8 +510,10 @@ const handleAction = async () => {
 
   isLoading.value = true;
   let payload = getObj(item.value, isStoreMode.value);
-  payload = extractNestedProp(payload, "user", "curp_doc");
   payload = extractNestedProp(payload, "user", "avatar_doc");
+  payload = extractNestedProp(payload, "user", "curp_doc");
+  payload = extractNestedProp(payload, "user", "birth_certificate_doc");
+  payload = extractNestedProp(payload, "user", "ine_doc");
 
   try {
     const endpoint = `${URL_API}/${routeName}${

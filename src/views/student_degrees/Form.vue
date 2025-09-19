@@ -124,14 +124,13 @@
                   </v-col>
                   <v-col cols="12" md="3">
                     <v-text-field
-                      label="Núm. cédula"
+                      label="Núm. cédula*"
                       v-model="item.license_number"
                       type="text"
                       variant="outlined"
                       density="compact"
                       maxlength="20"
                       counter
-                      :rules="rules.textRequired"
                     />
                   </v-col>
                   <v-col cols="12" md="3" class="d-flex">

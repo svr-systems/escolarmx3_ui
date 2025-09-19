@@ -38,7 +38,7 @@
         <v-col cols="12" class="text-caption text-center">
           <span v-if="programMeta">
             {{
-              `${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
+              `${programMeta.campus.name} | ${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
             }}
           </span>
           <v-progress-circular v-else indeterminate size="12" />
@@ -46,7 +46,7 @@
         <v-col cols="12" md="9" class="pb-0">
           <v-row dense>
             <v-col
-              v-if="store.getAuth?.user?.role_id === 2"
+              v-if="store.getAuth?.user?.role_id === 1"
               cols="12"
               md="3"
               class="pb-0"
@@ -195,9 +195,11 @@ const filterOptions = [{ id: 0, name: "TODOS" }];
 
 const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
-  { title: "Clave", key: "code", width: 120 },
   { title: "Nombre", key: "name" },
-  { title: "ID Interno", key: "uiid", width: 120 },
+  { title: "Clave", key: "code" },
+  { title: "Clave interna", key: "alt_code" },
+  { title: "Tipo", key: "course_type.name" },
+  { title: "Creditos", key: "credits" },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
 

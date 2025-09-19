@@ -22,7 +22,7 @@
       <div cols="12" class="text-caption text-center">
         <span v-if="programMeta">
           {{
-            `${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
+            `${programMeta.campus.name} | ${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
           }}
         </span>
         <v-progress-circular v-else indeterminate size="12" />
@@ -46,7 +46,7 @@
               </v-card-title>
               <v-card-text>
                 <v-row dense>
-                  <v-col cols="12" md="8">
+                  <v-col cols="12" md="6">
                     <v-text-field
                       label="Nombre"
                       v-model="item.name"
@@ -58,7 +58,7 @@
                       :rules="rules.textRequired"
                     />
                   </v-col>
-                  <v-col cols="12" md="2">
+                  <v-col cols="12" md="3">
                     <v-text-field
                       label="Clave"
                       v-model="item.code"
@@ -70,7 +70,7 @@
                       :rules="rules.textRequired"
                     />
                   </v-col>
-                  <v-col cols="12" md="2">
+                  <v-col cols="12" md="3">
                     <v-text-field
                       label="Clave interna"
                       v-model="item.alt_code"
@@ -82,7 +82,7 @@
                       :rules="rules.textOptional"
                     />
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="3">
                     <v-autocomplete
                       label="Tipo"
                       v-model="item.course_type_id"
@@ -95,7 +95,7 @@
                       :rules="rules.required"
                     />
                   </v-col>
-                  <v-col cols="12" md="2">
+                  <v-col cols="12" md="3">
                     <v-text-field
                       label="Creditos"
                       v-model="item.credits"
@@ -107,7 +107,7 @@
                       :rules="rules.required"
                     />
                   </v-col>
-                  <v-col cols="12" md="2">
+                  <v-col cols="12" md="3">
                     <v-text-field
                       label="Duracion de sesión (min.)"
                       v-model="item.session_minutes"
@@ -119,7 +119,7 @@
                       :rules="rules.required"
                     />
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="3">
                     <v-text-field
                       label="Periodo al que pertenece"
                       v-model="item.term"
@@ -131,7 +131,7 @@
                       :rules="rules.required"
                     />
                   </v-col>
-                  <v-col cols="12" md="8">
+                  <v-col cols="12" md="6">
                     <v-autocomplete
                       label="Asignatura precedente"
                       v-model="item.prerequisite_course_id"

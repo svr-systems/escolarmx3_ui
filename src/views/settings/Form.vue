@@ -5,7 +5,7 @@
         <v-col cols="10">
           <BtnBack
             :route="{
-              name: routeName + (!isStoreMode ? '/show' : ''),
+              name: `${routeName}/show`,
             }"
           />
           <CardTitle :text="$route.meta.title" :icon="$route.meta.icon" />
@@ -22,12 +22,7 @@
               <v-card-title>
                 <v-row dense>
                   <v-col cols="11">
-                    <CardTitle
-                      :text="`DATOS GENERALES${
-                        isStoreMode ? '' : ' | ' + (item.uiid || '')
-                      }`"
-                      sub
-                    />
+                    <CardTitle text="INSTITUCIÓN" sub />
                   </v-col>
                   <v-col cols="1" class="text-right" />
                 </v-row>
@@ -58,9 +53,7 @@
                       :rules="rules.imageOptional"
                       :disabled="item.logo_dlt"
                     />
-                    <div
-                      v-if="!isStoreMode && item.logo_path && !item.logo_doc"
-                    >
+                    <div v-if="item.logo_path && !item.logo_doc">
                       <BtnDwd
                         :value="item.logo_b64"
                         :disabled="item.logo_dlt"
@@ -118,7 +111,7 @@
                 icon
                 variant="flat"
                 size="x-small"
-                :color="isStoreMode ? 'success' : 'warning'"
+                color="warning"
                 @click.prevent="handleAction"
                 :loading="isLoading"
               >
@@ -145,7 +138,6 @@ import axios from "axios";
 import { useStore } from "@/store";
 import { URL_API } from "@/utils/config";
 import { getHdrs, getErr, getRsp } from "@/utils/http";
-import { getDecodeId, getEncodeId } from "@/utils/coders";
 import { getRules } from "@/utils/validators";
 import { getObj, getFormData } from "@/utils/helpers";
 
@@ -155,18 +147,16 @@ import CardTitle from "@/components/CardTitle.vue";
 import BtnDwd from "@/components/BtnDwd.vue";
 
 // Constantes fijas
-const routeName = "institutions";
+const routeName = "settings";
 
 // Estado y referencias
 const alert = inject("alert");
 const confirm = inject("confirm");
 const store = useStore();
 const router = useRouter();
-const route = useRoute();
 
 // Estado reactivo
-const itemId = ref(route.params.id ? getDecodeId(route.params.id) : null);
-const isStoreMode = ref(!itemId.value);
+const itemId = ref(1);
 const isLoading = ref(true);
 const formRef = ref(null);
 const item = ref(null);
@@ -174,28 +164,14 @@ const rules = getRules();
 
 // Obtener datos
 const getItem = async () => {
-  if (isStoreMode.value) {
-    item.value = {
-      id: null,
-      is_active: 1,
-      name: null,
-      logo_path: null,
-      logo_doc: null,
-      logo_dlt: false,
-      code: null,
-      cct: null,
-    };
+  try {
+    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
+    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    item.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
     isLoading.value = false;
-  } else {
-    try {
-      const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
-      const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
-      item.value = getRsp(response).data.item;
-    } catch (err) {
-      alert?.show("red-darken-1", getErr(err));
-    } finally {
-      isLoading.value = false;
-    }
   }
 };
 
@@ -207,18 +183,14 @@ const handleAction = async () => {
     return;
   }
 
-  const confirmed = await confirm?.show(
-    `¿Confirma ${isStoreMode.value ? "agregar" : "editar"} registro?`
-  );
+  const confirmed = await confirm?.show(`¿Confirma editar registro?`);
   if (!confirmed) return;
 
   isLoading.value = true;
-  const payload = getObj(item.value, isStoreMode.value);
+  const payload = getObj(item.value);
 
   try {
-    const endpoint = `${URL_API}/${routeName}${
-      !isStoreMode.value ? `/${payload.id}` : ""
-    }`;
+    const endpoint = `${URL_API}/${routeName}/${payload.id}`;
     const response = getRsp(
       await axios.post(
         endpoint,
@@ -231,11 +203,6 @@ const handleAction = async () => {
 
     router.push({
       name: `${routeName}/show`,
-      params: {
-        id: getEncodeId(
-          isStoreMode.value ? response.data.item.id : itemId.value
-        ),
-      },
     });
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
