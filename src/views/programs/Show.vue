@@ -29,6 +29,21 @@
             icon
             variant="flat"
             size="x-small"
+            color="teal"
+            class="me-1"
+            :to="{
+              name: 'program_cycles',
+              params: { program_id: getEncodeId(itemId) },
+            }"
+          >
+            <v-icon>mdi-calendar-blank</v-icon>
+            <v-tooltip activator="parent" location="left"> Ciclos </v-tooltip>
+          </v-btn>
+          <v-btn
+            v-if="item.is_active"
+            icon
+            variant="flat"
+            size="x-small"
             color="warning"
             :to="{
               name: `${routeName}/update`,

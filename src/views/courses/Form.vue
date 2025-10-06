@@ -19,7 +19,7 @@
     </v-card-title>
 
     <v-card-text v-if="item">
-      <div cols="12" class="text-caption text-center">
+      <div class="text-caption text-center">
         <span v-if="programMeta">
           {{
             `${programMeta.campus.name} | ${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
@@ -229,8 +229,8 @@ const getCatalogs = async () => {
   }
 
   try {
-    const endpoint = `${URL_API}/programs/${routeName}`;
-    const response = await axios.get(endpoint, {
+    endpoint = `${URL_API}/programs/${routeName}`;
+    response = await axios.get(endpoint, {
       params: {
         is_active: 1,
         filter: 0,
@@ -258,9 +258,7 @@ const getMeta = async () => {
     programMeta.value = getRsp(response).data.item;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
-  } finally {
-    isLoading.value = false;
-  }
+  } 
 };
 
 // Obtener datos

@@ -16,6 +16,7 @@
         :clearable="clearable"
         readonly
         :model-value="displayValue"
+        @click:clear="onClear"
       />
     </template>
 
@@ -114,6 +115,12 @@ watch(menu, (open) => {
 const onPick = (val) => {
   const ymd = toYmd(val) || null;
   emit("update:modelValue", ymd);
+  menu.value = false;
+};
+
+const onClear = () => {
+  emit("update:modelValue", null);
+  pickerDate.value = null;
   menu.value = false;
 };
 </script>

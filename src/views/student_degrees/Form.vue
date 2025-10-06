@@ -19,7 +19,7 @@
     </v-card-title>
 
     <v-card-text v-if="item">
-      <div cols="12" class="text-caption text-center">
+      <div class="text-caption text-center">
         <span v-if="studentMeta">
           {{ `${studentMeta.user.full_name} | ${studentMeta.user.curp}` }}
         </span>
@@ -71,14 +71,14 @@
                   </v-col>
                   <v-col cols="12" md="4">
                     <v-text-field
-                      label="Carrera"
+                      label="Carrera*"
                       v-model="item.name"
                       type="text"
                       variant="outlined"
                       density="compact"
                       maxlength="100"
                       counter
-                      :rules="rules.textRequired"
+                      :rules="rules.textOptional"
                     />
                   </v-col>
                   <v-col cols="12" md="3">
@@ -110,9 +110,9 @@
                   </v-col>
                   <v-col cols="12" md="3">
                     <InpDate
-                      label="Inicio"
+                      label="Inicio*"
                       v-model="item.start_at"
-                      :rules="rules.required"
+                      :clearable="true"
                     />
                   </v-col>
                   <v-col cols="12" md="3">
@@ -131,6 +131,7 @@
                       density="compact"
                       maxlength="20"
                       counter
+                      :rules="rules.textOptional"
                     />
                   </v-col>
                   <v-col cols="12" md="3" class="d-flex">
@@ -363,8 +364,6 @@ const getMeta = async () => {
     studentMeta.value = getRsp(response).data.item;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
-  } finally {
-    isLoading.value = false;
   }
 };
 

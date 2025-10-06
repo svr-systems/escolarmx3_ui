@@ -5,9 +5,9 @@
         <v-col cols="10">
           <BtnBack
             :route="{
-              name: 'students/show',
+              name: 'programs/show',
               params: {
-                id: getEncodeId(studentId),
+                id: getEncodeId(programId),
               },
             }"
           />
@@ -22,7 +22,7 @@
             :to="{
               name: `${routeName}/store`,
               params: {
-                student_id: getEncodeId(studentId),
+                program_id: getEncodeId(programId),
               },
             }"
           >
@@ -36,15 +36,17 @@
     <v-card-text>
       <v-row dense>
         <v-col cols="12" class="text-caption text-center">
-          <span v-if="studentMeta">
-            {{ `${studentMeta.user.full_name} | ${studentMeta.user.curp}` }}
+          <span v-if="programMeta">
+            {{
+              `${programMeta.campus.name} | ${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
+            }}
           </span>
           <v-progress-circular v-else indeterminate size="12" />
         </v-col>
         <v-col cols="12" md="9" class="pb-0">
           <v-row dense>
             <v-col
-              v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
+              v-if="store.getAuth?.user?.role_id === 1"
               cols="12"
               md="3"
               class="pb-0"
@@ -113,6 +115,17 @@
               <b>{{ item.key + 1 }}</b>
             </template>
 
+            <template #item.email_verified_at="{ item }">
+              <v-icon
+                size="x-small"
+                :color="item.email_verified_at ? 'info' : ''"
+              >
+                mdi-checkbox-blank-circle{{
+                  item.email_verified_at ? "" : "-outline"
+                }}
+              </v-icon>
+            </template>
+
             <template #item.action="{ item }">
               <div class="text-right">
                 <v-btn
@@ -123,15 +136,15 @@
                   :to="{
                     name: `${routeName}/show`,
                     params: {
-                      student_id: getEncodeId(studentId),
+                      program_id: getEncodeId(programId),
                       id: getEncodeId(item.id),
                     },
                   }"
                 >
                   <v-icon>mdi-eye</v-icon>
-                  <v-tooltip activator="parent" location="left"
-                    >Detalle</v-tooltip
-                  >
+                  <v-tooltip activator="parent" location="left">
+                    Detalle
+                  </v-tooltip>
                 </v-btn>
               </div>
             </template>
@@ -157,14 +170,14 @@ import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
 
 // Constantes
-const routeName = "student_degrees";
+const routeName = "program_cycles";
 const alert = inject("alert");
 const store = useStore();
 const route = useRoute();
 
 // Estado
-const studentId = ref(getDecodeId(route.params.student_id));
-const studentMeta = ref(null);
+const programId = ref(getDecodeId(route.params.program_id));
+const programMeta = ref(null);
 const isLoading = ref(false);
 const items = ref([]);
 const search = ref("");
@@ -182,20 +195,17 @@ const filterOptions = [{ id: 0, name: "TODOS" }];
 
 const headers = [
   { title: "#", key: "key", filterable: false, sortable: false, width: 60 },
-  { title: "Nivel educativo", key: "level.name" },
-  { title: "Institución educativa", key: "institution_name" },
-  { title: "Carrera", key: "name" },
-  { title: "Estado | Municipio", key: "municipality_state" },
-  { title: "Periodo", key: "term" },
-  { title: "Núm. cédula", key: "license_number" },
+  { title: "Ciclo", key: "cycle.code" },
+  { title: "Operaciones", key: "cycle.ops_at" },
+  { title: "Periodo lectivo", key: "cycle.term_at" },
   { title: "", key: "action", filterable: false, sortable: false, width: 60 },
 ];
 
 const getMeta = async () => {
   try {
-    const endpoint = `${URL_API}/students/${studentId.value}`;
+    const endpoint = `${URL_API}/programs/${programId.value}`;
     const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
-    studentMeta.value = getRsp(response).data.item;
+    programMeta.value = getRsp(response).data.item;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
   }
@@ -207,12 +217,12 @@ const getItems = async () => {
   items.value = [];
 
   try {
-    const endpoint = `${URL_API}/students/${routeName}`;
+    const endpoint = `${URL_API}/${routeName}`;
     const response = await axios.get(endpoint, {
       params: {
         is_active: isActive.value,
-        // filter: filter.value,
-        student_id: studentId.value,
+        filter: filter.value,
+        program_id: programId.value,
       },
       ...getHdrs(store.getAuth?.token),
     });

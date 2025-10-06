@@ -262,9 +262,84 @@ const routes = [
       middleware: [Auth, Roles([1, 2])],
     },
   },
+  //groups
+  {
+    path: "/carreras/:program_id/ciclos/:program_cycle_id/grupos",
+    name: "groups",
+    component: () => import("@/views/groups/List.vue"),
+    meta: {
+      title: "Carrera | Ciclo | Grupos",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
+  {
+    path: "/carreras/:program_id/ciclos/:program_cycle_id/grupos/agregar",
+    name: "groups/store",
+    component: () => import("@/views/groups/Form.vue"),
+    meta: {
+      title: "Carrera | Ciclo | Grupo | Agregar",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
+  {
+    path: "/carreras/:program_id/ciclos/:program_cycle_id/grupos/:id",
+    name: "groups/show",
+    component: () => import("@/views/groups/Show.vue"),
+    props: true,
+    meta: {
+      title: "Carrera | Ciclo | Grupo",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
+  {
+    path: "/carreras/:program_id/ciclos/:program_cycle_id/grupos/:id/editar",
+    name: "groups/update",
+    component: () => import("@/views/groups/Form.vue"),
+    props: true,
+    meta: {
+      title: "Carrera | Ciclo | Grupo | Editar",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
+  //program_cycles
+  {
+    path: "/carreras/:program_id/ciclos",
+    name: "program_cycles",
+    component: () => import("@/views/program_cycles/List.vue"),
+    meta: {
+      title: "Carrera | Ciclos",
+      icon: "mdi-calendar-blank",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
+  {
+    path: "/carreras/:program_id/ciclos/agregar",
+    name: "program_cycles/store",
+    component: () => import("@/views/program_cycles/Form.vue"),
+    meta: {
+      title: "Carrera | Ciclo | Agregar",
+      icon: "mdi-calendar-blank",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
+  {
+    path: "/carreras/:program_id/ciclos/:id",
+    name: "program_cycles/show",
+    component: () => import("@/views/program_cycles/Show.vue"),
+    props: true,
+    meta: {
+      title: "Carrera | Ciclo",
+      icon: "mdi-calendar-blank",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
   //courses
   {
-    path: "/carreras/:program_id/courses",
+    path: "/carreras/:program_id/asignaturas",
     name: "courses",
     component: () => import("@/views/courses/List.vue"),
     meta: {
@@ -274,7 +349,7 @@ const routes = [
     },
   },
   {
-    path: "/carreras/:program_id/courses/agregar",
+    path: "/carreras/:program_id/asignaturas/agregar",
     name: "courses/store",
     component: () => import("@/views/courses/Form.vue"),
     meta: {
@@ -284,7 +359,7 @@ const routes = [
     },
   },
   {
-    path: "/carreras/:program_id/courses/:id",
+    path: "/carreras/:program_id/asignaturas/:id",
     name: "courses/show",
     component: () => import("@/views/courses/Show.vue"),
     props: true,
@@ -295,7 +370,7 @@ const routes = [
     },
   },
   {
-    path: "/carreras/:program_id/courses/:id/editar",
+    path: "/carreras/:program_id/asignaturas/:id/editar",
     name: "courses/update",
     component: () => import("@/views/courses/Form.vue"),
     props: true,

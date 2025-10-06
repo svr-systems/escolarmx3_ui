@@ -36,7 +36,7 @@
     </v-card-title>
 
     <v-card-text v-if="item">
-      <div cols="12" class="text-caption text-center">
+      <div class="text-caption text-center">
         <span v-if="studentMeta">
           {{ `${studentMeta.user.full_name} | ${studentMeta.user.curp}` }}
         </span>
@@ -207,8 +207,6 @@ const getMeta = async () => {
     studentMeta.value = getRsp(response).data.item;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
-  } finally {
-    isLoading.value = false;
   }
 };
 

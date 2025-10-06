@@ -235,5 +235,6 @@ const getItems = async () => {
 // Cargar datos al montar
 onMounted(() => {
   getCatalogs();
+  getItems();
 });
 </script>

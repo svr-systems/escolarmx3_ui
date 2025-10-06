@@ -195,8 +195,6 @@ const getMeta = async () => {
     studentMeta.value = getRsp(response).data.item;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
-  } finally {
-    isLoading.value = false;
   }
 };
 

@@ -1,16 +1,11 @@
 <template>
-  <img
-    :src="store.conf.theme_dark ? logo_b : logo"
-    alt="Logo"
-    v-bind="imgAttrs"
-  />
+  <img :src="logo" alt="Logo" v-bind="imgAttrs" />
 </template>
 
 <script setup>
 import { computed } from "vue";
 import { useStore } from "@/store";
 import logo from "@/assets/logo.png";
-import logo_b from "@/assets/logo_b.png";
 
 const store = useStore();
 

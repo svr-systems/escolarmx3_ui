@@ -7,7 +7,7 @@
             :route="{
               name: routeName,
               params: {
-                student_id: getEncodeId(studentId),
+                program_id: getEncodeId(programId),
               },
             }"
           />
@@ -23,7 +23,8 @@
             :to="{
               name: `${routeName}/update`,
               params: {
-                student_id: getEncodeId(studentId),
+                program_id: getEncodeId(programId),
+                program_cycle_id: getEncodeId(programCycleId),
                 id: getEncodeId(itemId),
               },
             }"
@@ -37,10 +38,16 @@
 
     <v-card-text v-if="item">
       <div class="text-caption text-center">
-        <span v-if="studentMeta">
-          {{ `${studentMeta.user.full_name} | ${studentMeta.user.curp}` }}
-        </span>
-        <v-progress-circular v-else indeterminate size="12" />
+        <div v-if="programMeta && programCycleMeta">
+          {{
+            `${programMeta.campus.name} | ${programMeta.name} | ${programMeta.code} | ${programMeta.plan_year}`
+          }}
+          <br />
+          <small>
+            {{ `${programCycleMeta.cycle.code_full}` }}
+          </small>
+        </div>
+        <v-progress-circular v-else indeterminate size="12" class="pt-10" />
       </div>
       <v-row>
         <v-col v-if="!item.is_active" cols="12">
@@ -48,7 +55,7 @@
             <v-row dense>
               <v-col class="grow pt-2">El registro se encuentra inactivo</v-col>
               <v-col
-                v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
+                v-if="store.getAuth?.user?.role_id === 1"
                 class="shrink text-right"
               >
                 <v-btn
@@ -77,7 +84,7 @@
                 </v-col>
                 <v-col cols="1" class="text-right">
                   <v-btn
-                    v-if="[1, 2].includes(store.getAuth?.user?.role_id)"
+                    v-if="store.getAuth?.user?.role_id === 1"
                     icon
                     variant="flat"
                     size="x-small"
@@ -91,38 +98,70 @@
                 </v-col>
               </v-row>
             </v-card-title>
-
             <v-card-text>
               <v-row dense>
-                <v-col cols="12" md="3">
+                <v-col cols="12">
+                  <VisVal label="Asignatura" :value="item.course.name_code" />
+                </v-col>
+                <v-col cols="12">
                   <VisVal
-                    label="Fecha de recepción"
-                    :value="item.received_at"
+                    label="Docente"
+                    :value="item.teacher.user.full_name_curp"
                   />
                 </v-col>
-                <v-col cols="12" md="6">
-                  <VisVal label="Tipo" :value="item.document_type?.name" />
+                <v-col cols="12" md="4">
+                  <VisVal label="Identificador" :value="item.section" />
                 </v-col>
-                <v-col cols="12" md="3" class="d-flex">
-                  <VisDoc label="Archivo (PDF)" :value="item.document_b64" />
+                <v-col cols="12" md="4">
+                  <VisVal label="Aula" :value="item.room_name" />
                 </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal label="Número de copias" :value="item.copies_count" />
-                </v-col>
-                <v-col cols="12" md="3">
-                  <VisVal
-                    label="¿Deja original?"
-                    :value="item.is_original_left"
-                    :bool="true"
-                  />
+                <v-col cols="12" md="4">
+                  <VisVal label="Capacidad" :value="item.capacity_limit" />
                 </v-col>
               </v-row>
             </v-card-text>
           </v-card>
         </v-col>
 
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <v-row dense>
+                <v-col cols="11">
+                  <CardTitle text="HORARIOS" sub />
+                </v-col>
+                <v-col cols="1" class="text-right" />
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <template
+                v-for="(group_schedule, i) in item.group_schedules"
+                :key="i"
+              >
+                <v-row dense>
+                  <v-col cols="12" md="5">
+                    <VisVal
+                      label="Asignatura"
+                      :value="group_schedule.weekday.name"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <VisVal label="Inicia" :value="group_schedule.start_time" />
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <VisVal label="Finaliza" :value="group_schedule.end_time" />
+                  </v-col>
+                  <v-col cols="12" class="pb-4">
+                    <v-divider />
+                  </v-col>
+                </v-row>
+              </template>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
         <v-col
-          v-if="item.is_active && [1, 2].includes(store.getAuth?.user?.role_id)"
+          v-if="item.is_active && store.getAuth?.user?.role_id === 1"
           cols="12"
         >
           <v-btn
@@ -160,10 +199,9 @@ import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
 import DlgReg from "@/components/DlgReg.vue";
 import VisVal from "@/components/VisVal.vue";
-import VisDoc from "@/components/VisDoc.vue";
 
 // Constantes fijas
-const routeName = "student_documents";
+const routeName = "groups";
 
 // Estado y referencias
 const alert = inject("alert");
@@ -173,18 +211,27 @@ const router = useRouter();
 const route = useRoute();
 
 // Estado reactivo
-const studentId = ref(getDecodeId(route.params.student_id));
-const studentMeta = ref(null);
+const programId = ref(getDecodeId(route.params.program_id));
+const programMeta = ref(null);
+const programCycleId = ref(getDecodeId(route.params.program_cycle_id));
+const programCycleMeta = ref(null);
 const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);
 const regDialog = ref(false);
 
 const getMeta = async () => {
+  let endpoint = null;
+  let response = null;
+
   try {
-    const endpoint = `${URL_API}/students/${studentId.value}`;
-    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
-    studentMeta.value = getRsp(response).data.item;
+    endpoint = `${URL_API}/programs/${programId.value}`;
+    response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    programMeta.value = getRsp(response).data.item;
+
+    endpoint = `${URL_API}/program_cycles/${programCycleId.value}`;
+    response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    programCycleMeta.value = getRsp(response).data.item;
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
   }
@@ -194,7 +241,7 @@ const getMeta = async () => {
 const getItem = async () => {
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/students/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
     const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
     item.value = getRsp(response).data.item;
   } catch (err) {
@@ -211,7 +258,7 @@ const deleteItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/students/${routeName}/${itemId.value}`;
+    const endpoint = `${URL_API}/${routeName}/${itemId.value}`;
     const response = getRsp(
       await axios.delete(endpoint, getHdrs(store.getAuth?.token))
     );
@@ -232,7 +279,7 @@ const restoreItem = async () => {
 
   isLoading.value = true;
   try {
-    const endpoint = `${URL_API}/students/${routeName}/restore`;
+    const endpoint = `${URL_API}/${routeName}/restore`;
     const response = getRsp(
       await axios.post(
         endpoint,
