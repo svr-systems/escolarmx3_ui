@@ -4,6 +4,42 @@ import Auth from "./middleware/Auth";
 import { Roles } from "./middleware/Roles";
 
 const routes = [
+  /**
+   * ===========================================
+   * Teachers
+   * ===========================================
+   */
+
+  /**
+   * Groups
+   */
+  {
+    path: "/docente/grupos",
+    name: "teacher/groups",
+    component: () => import("@/views/teacher_groups/List.vue"),
+    meta: {
+      title: "Grupos",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([4])],
+    },
+  },
+  {
+    path: "/docente/grupos/:id",
+    name: "teacher/groups/show",
+    component: () => import("@/views/teacher_groups/Show.vue"),
+    props: true,
+    meta: {
+      title: "Grupo",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([4])],
+    },
+  },
+  /**
+   * ===========================================
+   * SYSTEM
+   * ===========================================
+   */
+
   //student_programs
   {
     path: "/alumnos/:student_id/carreras",
@@ -489,7 +525,12 @@ const routes = [
       middleware: [Auth, Roles([1, 2])],
     },
   },
-  //general
+
+  /**
+   * ===========================================
+   * GENERAL
+   * ===========================================
+   */
   {
     path: "/inicio",
     name: "home",
@@ -508,7 +549,12 @@ const routes = [
       middleware: [Auth],
     },
   },
-  //public
+
+  /**
+   * ===========================================
+   * PUBLIC
+   * ===========================================
+   */
   {
     path: "/iniciar_sesion",
     name: "login",
@@ -557,7 +603,12 @@ const routes = [
       middleware: [Public],
     },
   },
-  //not found
+
+  /**
+   * ===========================================
+   * NOT FOUND
+   * ===========================================
+   */
   {
     path: "/:pathMatch(.*)*",
     name: "not_found",

@@ -2,7 +2,7 @@
 export const APP_NAME = "EscolarMX";
 
 // Versión actual de la aplicación
-export const APP_VERSION = "3.25.09.25.1";
+export const APP_VERSION = "3.25.10.06";
 
 // URL base del backend
 export const BASE_URL = "https://apidev.escolarmx.net";
