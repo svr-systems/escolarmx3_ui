@@ -1,13 +1,15 @@
-// Nombre de la aplicación
 export const APP_NAME = "EscolarMX";
-
-// Versión actual de la aplicación
 export const APP_VERSION = "3.25.10.06";
 
-// URL base del backend
-export const BASE_URL = "https://apidev.escolarmx.net";
-// export const BASE_URL = "https://bonampakapi.escolarmx.net";
-// export const BASE_URL = "https://antaapi.escolarmx.net";
+const HOST = window.location.host;
+const HOST_URL =
+  "https://api" +
+  (HOST.startsWith("localhost") || HOST.startsWith("127.0.0.1")
+    ? "dev.escolarmx.net"
+    : HOST);
 
-// URL base para consumo de API REST
+console.log(HOST);
+console.log(HOST_URL);
+
+export const BASE_URL = HOST_URL;
 export const URL_API = `${BASE_URL}/api`;
