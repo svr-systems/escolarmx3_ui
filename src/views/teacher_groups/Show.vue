@@ -385,14 +385,22 @@
               </v-col>
 
               <v-col cols="12">
-                <v-textarea
-                  label="Indicaciones"
+                <div
+                  class="mb-2 text-caption font-weight-light text-medium-emphasis"
+                >
+                  Indicaciones
+                  <span class="text-error ms-1">*</span>
+                </div>
+                <InpEditor
                   v-model="activity.instructions"
-                  variant="outlined"
-                  density="compact"
-                  :rules="rules.textRequired"
-                  autocomplete="off"
+                  :is-invalid="instructionsError"
                 />
+                <div
+                  v-if="instructionsError"
+                  class="text-error text-caption mt-2 ms-4"
+                >
+                  {{ REQUIRED_MESSAGE }}
+                </div>
               </v-col>
 
               <v-col
@@ -506,6 +514,7 @@ import { getObj } from "@/utils/helpers";
 import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
 import InpDate from "@/components/InpDate.vue";
+import InpEditor from "@/components/InpEditor.vue";
 
 const routeName = "groups";
 
@@ -519,6 +528,13 @@ const itemId = ref(getDecodeId(route.params.id));
 const isLoading = ref(true);
 const item = ref(null);
 const rules = getRules();
+
+// mensaje de campo requerido para el editor
+const requiredValidator = rules.textRequired[0];
+const REQUIRED_MESSAGE = requiredValidator(null);
+
+// estado de error para el editor
+const instructionsError = ref(false);
 
 const activityTypes = ref([]);
 const activityTypesLoading = ref(true);
@@ -679,6 +695,7 @@ const activityDlg = ref(false);
 const activityForm = ref(null);
 
 const activityHandleDlg = async (GroupModuleId, id = null) => {
+  instructionsError.value = false;
   activity.value = null;
 
   if (!id) {
@@ -745,8 +762,25 @@ const onActivityTypeChange = (id) => {
 };
 
 const activityHandle = async () => {
+  instructionsError.value = false;
   const { valid } = await activityForm.value.validate();
-  if (!valid) return;
+
+  //validar contenido real del editor
+  let instructionsContent = activity.value.instructions || "";
+
+  // elimina etiquetas con vacio de Tiptap que use HTML como <p></p> o <p><br></p>
+  const cleanInstructions = instructionsContent
+    .replace(/<p><\/p>|<p><br><\/p>|<div><\/div>/g, "")
+    .trim();
+
+  // después de limpiar el contenido es una cadena vacía, el campo es vacío
+  const isTextEmpty = cleanInstructions === "";
+
+  instructionsError.value = isTextEmpty;
+
+  if (!valid || isTextEmpty) {
+    return;
+  }
 
   const isStoreMode = !activity.value.id;
 
@@ -757,6 +791,7 @@ const activityHandle = async () => {
 
   activityLdg.value = true;
 
+  // contenido HTML completo incluyendo cualquier formato
   let payload = getObj(activity.value, isStoreMode);
 
   try {
@@ -768,6 +803,12 @@ const activityHandle = async () => {
     );
 
     alert?.show("success", response.msg);
+
+    // cargar el item de respuesta de la API en el estado para actualizar el editor y otros campos
+    if (response.data.item) {
+      activity.value = response.data.item;
+    }
+
     activityDlg.value = false;
     getGroupModules();
   } catch (err) {
