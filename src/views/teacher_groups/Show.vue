@@ -535,35 +535,10 @@
                           !activity_resources.storage_doc
                         "
                       >
-                        <BtnDwd
+                        <VisDoc2
                           :value="activity_resources.storage_b64"
                           :disabled="activity_resources.storage_dlt"
                         />
-                        <v-btn
-                          icon
-                          variant="text"
-                          size="small"
-                          :color="
-                            activity_resources.storage_dlt ? 'error' : undefined
-                          "
-                          @click.prevent="
-                            activity_resources.storage_dlt =
-                              !activity_resources.storage_dlt
-                          "
-                        >
-                          <v-icon size="small">
-                            mdi-delete{{
-                              activity_resources.storage_dlt ? "-off" : ""
-                            }}
-                          </v-icon>
-                          <v-tooltip activator="parent" location="bottom">
-                            {{
-                              activity_resources.storage_dlt
-                                ? "Revertir eliminación"
-                                : "Eliminar"
-                            }}
-                          </v-tooltip>
-                        </v-btn>
                       </div>
                     </v-col>
                     <v-col v-else cols="12" md="4">
@@ -811,6 +786,7 @@ const activity = ref(null);
 const activityLdg = ref(false);
 const activityDlg = ref(false);
 const activityForm = ref(null);
+
 const editorRef = ref(null);
 
 const activityHandleDlg = async (GroupModuleId, id = null) => {
