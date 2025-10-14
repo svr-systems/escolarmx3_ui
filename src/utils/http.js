@@ -45,5 +45,5 @@ export const getRsp = (response) => {
 export const getApi = (url) => {
   const host = new URL(url).hostname;
   const subdomain = host.split(".")[0];
-  return subdomain.replace(/api$/i, "");
+  return subdomain.replace(/^api/i, "");
 };

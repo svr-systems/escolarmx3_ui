@@ -7,7 +7,6 @@
 </template>
 
 <script setup>
-// Constantes y funciones
 import { APP_VERSION, BASE_URL } from "@/utils/config";
 import { getApi } from "@/utils/http";
 import { getCurrentYear } from "@/utils/helpers";
