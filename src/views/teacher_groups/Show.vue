@@ -384,21 +384,11 @@
               </v-col>
 
               <v-col cols="12">
-                <div
-                  class="mb-1 text-caption font-weight-light text-medium-emphasis"
-                >
-                  Indicaciones
-                </div>
                 <InpEditor
+                  ref="editorRef"
                   v-model="activity.instructions"
-                  :is-invalid="instructionsError"
+                  :rules="rules.textRequired"
                 />
-                <div
-                  v-if="instructionsError"
-                  class="text-error text-caption mt-2 ms-4"
-                >
-                  {{ REQUIRED_MESSAGE }}
-                </div>
               </v-col>
 
               <v-col
@@ -664,13 +654,6 @@ const isLoading = ref(true);
 const item = ref(null);
 const rules = getRules();
 
-// mensaje de campo requerido para el editor
-const requiredValidator = rules.textRequired[0];
-const REQUIRED_MESSAGE = requiredValidator(null);
-
-// estado de error para el editor
-const instructionsError = ref(false);
-
 const activityTypes = ref([]);
 const activityTypesLoading = ref(true);
 
@@ -828,9 +811,9 @@ const activity = ref(null);
 const activityLdg = ref(false);
 const activityDlg = ref(false);
 const activityForm = ref(null);
+const editorRef = ref(null);
 
 const activityHandleDlg = async (GroupModuleId, id = null) => {
-  instructionsError.value = false;
   activity.value = null;
 
   if (!id) {
@@ -897,23 +880,9 @@ const onActivityTypeChange = (id) => {
 };
 
 const activityHandle = async () => {
-  instructionsError.value = false;
+  const editorValid = editorRef.value && typeof editorRef.value.validate === 'function' ? editorRef.value.validate() : true;
   const { valid } = await activityForm.value.validate();
-
-  //validar contenido real del editor
-  let instructionsContent = activity.value.instructions || "";
-
-  // elimina etiquetas con vacio de Tiptap que use HTML como <p></p> o <p><br></p>
-  const cleanInstructions = instructionsContent
-    .replace(/<p><\/p>|<p><br><\/p>|<div><\/div>/g, "")
-    .trim();
-
-  // después de limpiar el contenido es una cadena vacía, el campo es vacío
-  const isTextEmpty = cleanInstructions === "";
-
-  instructionsError.value = isTextEmpty;
-
-  if (!valid || isTextEmpty) {
+  if (!editorValid || !valid) {
     return;
   }
 

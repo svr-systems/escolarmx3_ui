@@ -1,12 +1,18 @@
 <template>
-  <div
-    v-if="editor"
-    class="mb-4 editor-container"
-    :class="{
-      'editor-error-border': isInvalid,
-      'editor-default-border': !isInvalid,
-    }"
-  >
+   <div class="mb-4">
+     <div
+       class="mb-1 text-caption font-weight-light text-medium-emphasis"
+     >
+       Indicaciones
+     </div>
+     <div
+       v-if="editor"
+       class="editor-container"
+       :class="{
+         'editor-error-border': hasError,
+         'editor-default-border': !hasError,
+       }"
+     >
     <v-toolbar density="compact" rounded="t-md" border>
       <div class="d-flex ga-2 pa-2 flex-wrap toolbar-buttons">
         <v-btn
@@ -120,41 +126,70 @@
         ['border border-grey-lighten-1']
       ]"
     />
+    </div>
+    <div
+      v-if="hasError"
+      class="text-error text-caption mt-2 ms-4"
+    >
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 
 <script setup>
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
-import { onBeforeUnmount, watch } from "vue";
+import { onBeforeUnmount, watch, ref } from "vue";
 
 import { useStore } from "@/store";
 
 const store = useStore();
 
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: "",
-  },
-  // Prop para manejo manual de errores
-  isInvalid: {
-    type: Boolean,
-    default: false,
-  },
-  errorMessage: {
-    type: String,
-    default: "",
-  },
+   modelValue: {
+     type: String,
+     default: "",
+   },
+   rules: {
+     type: Array,
+     default: () => [],
+   },
 });
 
 const emit = defineEmits(["update:modelValue"]);
+
+const hasError = ref(false);
+const errorMessage = ref("");
+
+const validate = () => {
+  if (!props.rules.length) return true;
+
+  const value = props.modelValue || "";
+  const cleanValue = value.replace(/<p><\/p>|<p><br><\/p>|<div><\/div>/g, "").trim();
+  const isEmpty = cleanValue === "";
+
+  for (const rule of props.rules) {
+    const result = rule(isEmpty ? "" : cleanValue);
+    if (result !== true) {
+      hasError.value = true;
+      errorMessage.value = result;
+      return false;
+    }
+  }
+
+  hasError.value = false;
+  errorMessage.value = "";
+  return true;
+};
 
 const editor = useEditor({
   extensions: [StarterKit],
   content: props.modelValue || "",
   onUpdate: ({ editor }) => {
     emit("update:modelValue", editor.getHTML());
+    if (props.rules.length) {
+      validate();
+    }
   },
 });
 
@@ -169,10 +204,16 @@ watch(
     if (newValue !== currentHtml) {
       // setContent para reemplazar el contenido con HTML, false para evitar un bucle de actualización
       editor.value.commands.setContent(newValue || "", false);
+      if (props.rules.length) {
+        validate();
+      }
     }
   },
   { immediate: true }
 );
+defineExpose({
+  validate,
+});
 
 onBeforeUnmount(() => {
   editor.value?.destroy();
