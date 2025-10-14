@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="editor"
-    class="editor-container"
+    class="mb-4 editor-container"
     :class="{
       'editor-error-border': isInvalid,
       'editor-default-border': !isInvalid,
@@ -111,7 +111,15 @@
       </div>
     </v-toolbar>
 
-    <editor-content :editor="editor" class="pa-4 bg-white tiptap-content" />
+    <editor-content
+      :editor="editor"
+      :class="[
+        ['pa-4'],
+        ['tiptap-content'],
+        [store.conf.theme_dark ? 'bg-grey-darken-4' : ''],
+        ['border border-grey-lighten-1']
+      ]"
+    />
   </div>
 </template>
 
@@ -119,6 +127,10 @@
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { onBeforeUnmount, watch } from "vue";
+
+import { useStore } from "@/store";
+
+const store = useStore();
 
 const props = defineProps({
   modelValue: {
@@ -178,11 +190,6 @@ onBeforeUnmount(() => {
 .editor-container {
   width: 100%;
   border-radius: 5px;
-}
-
-/* simula el outlined del borde por defecto */
-.editor-default-border {
-  border: 1px solid rgb(255, 255, 255) !important;
 }
 
 /* Estilo del borde en estado de error (simula el borde rojo) */

@@ -97,25 +97,31 @@
                         </v-card-title>
                         <v-card-text>
                           <v-row dense>
-                            <v-col
-                              cols="11"
-                              class="text-caption font-weight-light"
-                            >
-                              ACTIVIDADES
-                            </v-col>
-                            <v-col cols="1" class="text-right">
-                              <v-btn
-                                icon
-                                variant="text"
-                                size="x-small"
-                                @click="activityHandleDlg(groupModule.id)"
+                            <v-col cols="12">
+                              <div class="text-caption font-weight-light">
+                                ACTIVIDADES
+                                <v-btn
+                                  icon
+                                  variant="text"
+                                  size="x-small"
+                                  @click="activityHandleDlg(groupModule.id)"
+                                >
+                                  <v-icon>mdi-plus</v-icon>
+                                  <v-tooltip activator="parent" location="end">
+                                    Agregar
+                                  </v-tooltip>
+                                </v-btn>
+                              </div>
+                              <div
+                                class="text-caption font-weight-thin text-medium-emphasis"
                               >
-                                <v-icon>mdi-plus</v-icon>
-                                <v-tooltip activator="parent" location="left">
-                                  Agregar
-                                </v-tooltip>
-                              </v-btn>
+                                <small>
+                                  {{ groupModule.start_at }} |
+                                  {{ groupModule.end_at }}
+                                </small>
+                              </div>
                             </v-col>
+
                             <v-col cols="12">
                               <v-table density="compact" striped="even">
                                 <thead>
@@ -128,7 +134,7 @@
                                     <th>
                                       <small>Fecha limite de atraso</small>
                                     </th>
-                                    <th width="100" />
+                                    <th width="64" />
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -171,23 +177,6 @@
                                         variant="text"
                                         size="x-small"
                                         @click.prevent="
-                                          activityRemove(activity.id)
-                                        "
-                                      >
-                                        <v-icon>mdi-minus</v-icon>
-                                        <v-tooltip
-                                          activator="parent"
-                                          location="left"
-                                        >
-                                          Eliminar
-                                        </v-tooltip>
-                                      </v-btn>
-
-                                      <v-btn
-                                        icon
-                                        variant="text"
-                                        size="x-small"
-                                        @click.prevent="
                                           activityHandleDlg(
                                             groupModule.id,
                                             activity.id
@@ -197,7 +186,7 @@
                                         <v-icon>mdi-pencil</v-icon>
                                         <v-tooltip
                                           activator="parent"
-                                          location="left"
+                                          location="start"
                                         >
                                           Editar
                                         </v-tooltip>
@@ -333,23 +322,33 @@
 
     <v-dialog v-model="activityDlg" persistent scrim="black" max-width="1200">
       <v-card :loading="activityLdg" :disabled="activityLdg" flat>
-        <v-card-title>
-          <v-row dense>
-            <v-col cols="11">
-              <CardTitle text="ACTIVIDAD" subvalue />
-            </v-col>
-            <v-col cols="1" class="text-right">
-              <v-btn
-                icon
-                variant="text"
-                size="x-small"
-                @click="activityDlg = false"
-              >
-                <v-icon>mdi-close</v-icon>
-                <v-tooltip activator="parent" location="left">Cerrar</v-tooltip>
-              </v-btn>
-            </v-col>
-          </v-row>
+        <v-card-title class="d-flex align-center justify-space-between">
+          <div class="d-flex align-center">
+            <v-btn
+              v-if="activity?.id"
+              icon
+              variant="text"
+              size="x-small"
+              color="error"
+              @click.prevent="activityRemove(activity?.id)"
+            >
+              <v-icon>mdi-delete-outline</v-icon>
+              <v-tooltip activator="parent" location="bottom">
+                Eliminar
+              </v-tooltip>
+            </v-btn>
+            <span class="font-weight-light text-subtitle-1">ACTIVIDAD</span>
+          </div>
+
+          <v-btn
+            icon
+            variant="text"
+            size="x-small"
+            @click="activityDlg = false"
+          >
+            <v-icon>mdi-close</v-icon>
+            <v-tooltip activator="parent" location="left">Cerrar</v-tooltip>
+          </v-btn>
         </v-card-title>
 
         <v-card-text v-if="activity">
@@ -386,10 +385,9 @@
 
               <v-col cols="12">
                 <div
-                  class="mb-2 text-caption font-weight-light text-medium-emphasis"
+                  class="mb-1 text-caption font-weight-light text-medium-emphasis"
                 >
                   Indicaciones
-                  <span class="text-error ms-1">*</span>
                 </div>
                 <InpEditor
                   v-model="activity.instructions"
@@ -476,6 +474,138 @@
                 />
               </v-col>
 
+              <v-col v-if="activity.activity_type_id" cols="12">
+                <v-row dense>
+                  <v-col cols="12">
+                    <div
+                      class="text-caption font-weight-light text-medium-emphasis"
+                    >
+                      Recursos
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="x-small"
+                        @click="activityResourcesAdd()"
+                      >
+                        <v-icon>mdi-plus</v-icon>
+                        <v-tooltip activator="parent" location="end">
+                          Agregar
+                        </v-tooltip>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                </v-row>
+
+                <template
+                  v-for="(activity_resources, i) of activity.activity_resources"
+                  :key="i"
+                >
+                  <v-row dense v-if="activity_resources.is_active == 1">
+                    <v-col cols="12" md="3">
+                      <v-radio-group
+                        v-model="activity_resources.is_storage"
+                        inline
+                      >
+                        <v-radio label="Archivo" :value="true" />
+                        <v-radio label="URL" :value="false" />
+                      </v-radio-group>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <v-text-field
+                        label="Título"
+                        v-model="activity_resources.name"
+                        type="text"
+                        variant="outlined"
+                        density="compact"
+                        maxlength="100"
+                        counter
+                        :rules="rules.textRequired"
+                      />
+                    </v-col>
+                    <v-col
+                      v-if="activity_resources.is_storage"
+                      cols="12"
+                      md="4"
+                      class="d-flex"
+                    >
+                      <v-file-input
+                        label="Archivo"
+                        v-model="activity_resources.storage_doc"
+                        variant="outlined"
+                        density="compact"
+                        prepend-icon=""
+                        show-size
+                        accept=".pdf"
+                        :rules="rules.fileOptional"
+                      />
+                      <div
+                        v-if="
+                          activity.id &&
+                          activity_resources.storage_path &&
+                          !activity_resources.storage_doc
+                        "
+                      >
+                        <BtnDwd
+                          :value="activity_resources.storage_b64"
+                          :disabled="activity_resources.storage_dlt"
+                        />
+                        <v-btn
+                          icon
+                          variant="text"
+                          size="small"
+                          :color="
+                            activity_resources.storage_dlt ? 'error' : undefined
+                          "
+                          @click.prevent="
+                            activity_resources.storage_dlt =
+                              !activity_resources.storage_dlt
+                          "
+                        >
+                          <v-icon size="small">
+                            mdi-delete{{
+                              activity_resources.storage_dlt ? "-off" : ""
+                            }}
+                          </v-icon>
+                          <v-tooltip activator="parent" location="bottom">
+                            {{
+                              activity_resources.storage_dlt
+                                ? "Revertir eliminación"
+                                : "Eliminar"
+                            }}
+                          </v-tooltip>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                    <v-col v-else cols="12" md="4">
+                      <v-text-field
+                        label="URL"
+                        v-model="activity_resources.url"
+                        type="text"
+                        variant="outlined"
+                        density="compact"
+                        maxlength="255"
+                        counter
+                        :rules="rules.textRequired"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="1" class="text-right pt-2">
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="x-small"
+                        color="error"
+                        @click.prevent="activityResourcesRemove(i)"
+                      >
+                        <v-icon>mdi-delete-outline</v-icon>
+                        <v-tooltip activator="parent" location="start">
+                          Eliminar
+                        </v-tooltip>
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </template>
+              </v-col>
+
               <v-col cols="12" class="text-right">
                 <v-btn
                   block
@@ -509,12 +639,17 @@ import { getHdrs, getErr, getRsp } from "@/utils/http";
 import { getDecodeId, getEncodeId } from "@/utils/coders";
 import { getRules } from "@/utils/validators";
 import { getPercentFormat } from "@/utils/formatters";
-import { getObj } from "@/utils/helpers";
+import {
+  getObj,
+  extractMultipleNestedProps,
+  getFormData,
+} from "@/utils/helpers";
 
 import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
 import InpDate from "@/components/InpDate.vue";
 import InpEditor from "@/components/InpEditor.vue";
+import BtnDwd from "@/components/BtnDwd.vue";
 
 const routeName = "groups";
 
@@ -793,21 +928,30 @@ const activityHandle = async () => {
 
   // contenido HTML completo incluyendo cualquier formato
   let payload = getObj(activity.value, isStoreMode);
+  payload = extractMultipleNestedProps(
+    payload,
+    "activity_resources",
+    "storage_doc"
+  );
 
   try {
     const endpoint = `${URL_API}/teacher/group_modules/activities${
       isStoreMode ? "" : `/${payload.id}`
     }`;
     const response = getRsp(
-      await axios.post(endpoint, payload, getHdrs(store.getAuth?.token))
+      await axios.post(
+        endpoint,
+        getFormData(payload),
+        getHdrs(store.getAuth?.token, true)
+      )
     );
 
     alert?.show("success", response.msg);
 
     // cargar el item de respuesta de la API en el estado para actualizar el editor y otros campos
-    if (response.data.item) {
-      activity.value = response.data.item;
-    }
+    // if (response.data?.item) {
+    //   activity.value = response.data.item;
+    // }
 
     activityDlg.value = false;
     getGroupModules();
@@ -829,11 +973,34 @@ const activityRemove = async (id) => {
       await axios.delete(endpoint, getHdrs(store.getAuth?.token))
     );
     alert?.show("success", response.msg);
+    activityDlg.value = false;
     getGroupModules();
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
   } finally {
     isLoading.value = false;
+  }
+};
+
+const activityResourcesAdd = async () => {
+  activity.value.activity_resources.push({
+    id: null,
+    is_active: 1,
+    name: null,
+    is_storage: true,
+    storage_path: null,
+    storage_doc: null,
+    storage_dlt: false,
+    extension: null,
+    url: null,
+  });
+};
+
+const activityResourcesRemove = async (i) => {
+  if (activity.value.activity_resources[i].id === null) {
+    activity.value.activity_resources.splice(i, 1);
+  } else {
+    activity.value.activity_resources[i].is_active = 0;
   }
 };
 
