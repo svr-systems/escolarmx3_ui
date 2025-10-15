@@ -30,7 +30,7 @@ export const getBlob = (base64, ext) => {
     png: "image/png",
     gif: "image/gif",
     txt: "text/plain",
-    csv: "text/csv",
+    xml: "text/xml",
   };
 
   const cleanedBase64 = base64.replace(/\s/g, "");

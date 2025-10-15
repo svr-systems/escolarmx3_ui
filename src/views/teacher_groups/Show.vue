@@ -535,10 +535,41 @@
                           !activity_resources.storage_doc
                         "
                       >
-                        <VisDoc2
-                          :value="activity_resources.storage_b64"
-                          :disabled="activity_resources.storage_dlt"
-                        />
+                        <v-row dense class="align-center">
+                          <v-col cols="auto">
+                            <VisDoc2
+                              :value="activity_resources.storage_b64"
+                              :disabled="activity_resources.storage_dlt"
+                            />
+                          </v-col>
+                          <v-col cols="auto">
+                            <v-btn
+                              icon
+                              variant="text"
+                              size="small"
+                              :color="
+                                activity_resources.storage_dlt ? 'error' : undefined
+                              "
+                              @click.prevent="
+                                activity_resources.storage_dlt =
+                                  !activity_resources.storage_dlt
+                              "
+                            >
+                              <v-icon size="small">
+                                mdi-delete{{
+                                  activity_resources.storage_dlt ? "-off" : ""
+                                }}
+                              </v-icon>
+                              <v-tooltip activator="parent" location="bottom">
+                                {{
+                                  activity_resources.storage_dlt
+                                    ? "Revertir eliminación"
+                                    : "Eliminar"
+                                }}
+                              </v-tooltip>
+                            </v-btn>
+                          </v-col>
+                        </v-row>
                       </div>
                     </v-col>
                     <v-col v-else cols="12" md="4">
@@ -610,11 +641,12 @@ import {
   getFormData,
 } from "@/utils/helpers";
 
+// Importaciones
 import BtnBack from "@/components/BtnBack.vue";
 import CardTitle from "@/components/CardTitle.vue";
 import InpDate from "@/components/InpDate.vue";
 import InpEditor from "@/components/InpEditor.vue";
-import BtnDwd from "@/components/BtnDwd.vue";
+import VisDoc2 from "@/components/VisDoc2.vue";
 
 const routeName = "groups";
 
