@@ -212,6 +212,17 @@ const routes = [
       middleware: [Auth, Roles([1, 2])],
     },
   },
+  {
+    path: "/alumnos/:id/kardex/:student_program_id",
+    name: "students/courses",
+    component: () => import("@/views/students/Courses.vue"),
+    props: true,
+    meta: {
+      title: "Alumno | Kardex",
+      icon: "mdi-folder-table",
+      middleware: [Auth, Roles([1, 2])],
+    },
+  },
   //cycles
   {
     path: "/ciclos",

@@ -313,7 +313,6 @@
                     variant="flat"
                     size="x-small"
                     color="pink"
-                    class="me-1"
                     :to="{
                       name: 'student_programs',
                       params: { student_id: getEncodeId(itemId) },
@@ -335,7 +334,7 @@
                     :value="student_program.program?.level?.name"
                   />
                 </v-col>
-                <v-col cols="12" md="7">
+                <v-col cols="12" md="6">
                   <VisVal
                     label="Carrera"
                     :value="student_program.program?.name_code"
@@ -346,6 +345,26 @@
                     label="Ciclo de ingreso"
                     :value="student_program.cycle_entry?.code"
                   />
+                </v-col>
+                <v-col cols="12" md="1" class="text-right">
+                  <v-btn
+                    icon
+                    variant="flat"
+                    size="x-small"
+                    color="warning"
+                    :to="{
+                      name: `${routeName}/courses`,
+                      params: {
+                        id: getEncodeId(itemId),
+                        student_program_id: getEncodeId(student_program.id),
+                      },
+                    }"
+                  >
+                    <v-icon>mdi-folder-table</v-icon>
+                    <v-tooltip activator="parent" location="left">
+                      Kardex
+                    </v-tooltip>
+                  </v-btn>
                 </v-col>
                 <v-col cols="12">
                   <v-divider />
