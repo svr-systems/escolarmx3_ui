@@ -14,7 +14,13 @@
             </v-col>
 
             <v-col cols="12" class="pb-6">
-              <Logo width="60%" />
+              <Logo v-if="setting" :base64="setting.logo_b64" width="60%" />
+              <v-progress-circular
+                v-else
+                :size="160"
+                :width="7"
+                indeterminate
+              />
             </v-col>
 
             <v-col cols="12">
@@ -91,9 +97,8 @@ import { useRoute } from "vue-router";
 import axios from "axios";
 
 // Estado global y utilidades
-import { useStore } from "@/store";
 import { URL_API } from "@/utils/config";
-import { getHdrs, getErr } from "@/utils/http";
+import { getHdrs, getErr, getRsp } from "@/utils/http";
 import { getRules } from "@/utils/validators";
 import { getObj } from "@/utils/helpers";
 
@@ -104,7 +109,6 @@ import BtnTheme from "@/components/BtnTheme.vue";
 import Version from "@/components/Version.vue";
 
 // Estado
-const store = useStore();
 const alert = inject("alert");
 const route = useRoute();
 
@@ -113,6 +117,18 @@ const formRef = ref(null);
 const item = ref({ email: route.query.email || null });
 const success = ref(false);
 const rules = getRules();
+
+const setting = ref(null);
+
+const getSetting = async () => {
+  try {
+    const endpoint = `${URL_API}/setting`;
+    const response = await axios.get(endpoint, getHdrs());
+    setting.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  }
+};
 
 // Enviar email de recuperación
 const handleAction = async () => {
@@ -132,4 +148,9 @@ const handleAction = async () => {
     isLoading.value = false;
   }
 };
+
+// Inicialización
+onMounted(() => {
+  getSetting();
+});
 </script>

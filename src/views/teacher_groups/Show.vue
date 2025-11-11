@@ -41,13 +41,13 @@
         <v-col cols="12">
           <v-tabs v-model="tab" density="compact" align-tabs="center">
             <v-tab :value="1">Tablero</v-tab>
-            <v-tab :value="2" disabled>Alumnos</v-tab>
+            <!-- <v-tab :value="2" disabled>Alumnos</v-tab> -->
           </v-tabs>
 
           <v-tabs-window v-model="tab">
             <v-tabs-window-item :value="1">
               <v-container>
-                <v-row dense>
+                <v-row>
                   <v-col cols="12">
                     <v-divider />
                   </v-col>
@@ -57,7 +57,7 @@
                       :key="i"
                       cols="12"
                     >
-                      <v-card flat>
+                      <v-card variant="flat" hover>
                         <v-card-title>
                           <v-row dense>
                             <v-col cols="10">
@@ -104,7 +104,7 @@
                                   icon
                                   variant="text"
                                   size="x-small"
-                                  @click="activityHandleDlg(groupModule.id)"
+                                  @click="activityHandleDlg(groupModule.id, i)"
                                 >
                                   <v-icon>mdi-plus</v-icon>
                                   <v-tooltip activator="parent" location="end">
@@ -119,14 +119,14 @@
                                 <thead>
                                   <tr>
                                     <th width="40"><small>#</small></th>
-                                    <th><small>Tipo</small></th>
                                     <th><small>Título</small></th>
+                                    <th><small>Tipo</small></th>
                                     <th><small>Porcentaje</small></th>
-                                    <th><small>Fecha de entrega</small></th>
+                                    <th><small>Entrega</small></th>
                                     <th>
-                                      <small>Fecha limite de atraso</small>
+                                      <small>Limite de atraso</small>
                                     </th>
-                                    <th width="64" />
+                                    <th width="120" />
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -143,10 +143,10 @@
                                       }}
                                     </td>
                                     <td>
-                                      {{ activity.activity_type.name }}
+                                      {{ activity.title }}
                                     </td>
                                     <td>
-                                      {{ activity.title }}
+                                      {{ activity.activity_type.name }}
                                     </td>
                                     <td>
                                       {{
@@ -171,6 +171,7 @@
                                         @click.prevent="
                                           activityHandleDlg(
                                             groupModule.id,
+                                            i,
                                             activity.id
                                           )
                                         "
@@ -181,6 +182,25 @@
                                           location="start"
                                         >
                                           Editar
+                                        </v-tooltip>
+                                      </v-btn>
+                                      <v-btn
+                                        icon
+                                        variant="text"
+                                        size="x-small"
+                                        @click.prevent="
+                                          activityDetailHandleDlg(
+                                            i,
+                                            activity.id
+                                          )
+                                        "
+                                      >
+                                        <v-icon>mdi-eye</v-icon>
+                                        <v-tooltip
+                                          activator="parent"
+                                          location="start"
+                                        >
+                                          Ver detalle
                                         </v-tooltip>
                                       </v-btn>
                                     </td>
@@ -315,7 +335,8 @@
     <v-dialog v-model="activityDlg" persistent scrim="black" max-width="1200">
       <v-card :loading="activityLdg" :disabled="activityLdg" flat>
         <v-card-title class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
+          <div>
+            <span class="font-weight-light ps-2">ACTIVIDAD</span>
             <v-btn
               v-if="activity?.id"
               icon
@@ -325,11 +346,17 @@
               @click.prevent="activityRemove(activity?.id)"
             >
               <v-icon>mdi-delete-outline</v-icon>
-              <v-tooltip activator="parent" location="bottom">
+              <v-tooltip activator="parent" location="end">
                 Eliminar
               </v-tooltip>
             </v-btn>
-            <span class="font-weight-light text-subtitle-1">ACTIVIDAD</span>
+            <div
+              class="text-caption font-weight-light text-medium-emphasis ps-2"
+            >
+              <small>
+                {{ activity ? `Módulo ${activity.group_module_idx + 1}` : "" }}
+              </small>
+            </div>
           </div>
 
           <v-btn
@@ -343,9 +370,12 @@
           </v-btn>
         </v-card-title>
 
-        <v-card-text v-if="activity">
+        <v-card-text v-if="activity" class="pt-0">
           <v-form ref="activityForm" @submit.prevent>
             <v-row dense>
+              <v-col cols="12">
+                <v-divider class="pb-3" />
+              </v-col>
               <v-col cols="12" md="4">
                 <v-select
                   label="Tipo"
@@ -613,6 +643,328 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="activityDetailDlg"
+      persistent
+      scrim="black"
+      max-width="800"
+    >
+      <v-card :loading="activityDetailLdg" :disabled="activityDetailLdg" flat>
+        <v-card-title class="d-flex align-center justify-space-between">
+          <div>
+            <div class="font-weight-light ps-2">
+              {{ activity?.title }}
+            </div>
+            <div
+              class="text-caption font-weight-light text-medium-emphasis ps-2"
+            >
+              <small>
+                {{ activity ? `Módulo ${activity.group_module_idx + 1}` : "" }}
+              </small>
+            </div>
+          </div>
+
+          <v-btn
+            icon
+            variant="text"
+            size="x-small"
+            @click="activityDetailDlg = false"
+          >
+            <v-icon>mdi-close</v-icon>
+            <v-tooltip activator="parent" location="left">Cerrar</v-tooltip>
+          </v-btn>
+        </v-card-title>
+
+        <v-card-text v-if="activity" class="pt-0">
+          <v-row dense>
+            <v-col cols="12" class="py-3">
+              <v-divider />
+            </v-col>
+
+            <v-col v-if="activity.is_gradable" cols="12" md="3">
+              <VisVal label="Tipo" :value="activity?.activity_type?.name" />
+            </v-col>
+
+            <v-col v-if="activity.is_gradable" cols="12" md="3">
+              <VisVal label="Porcentaje %" :value="activity.weight_percent" />
+            </v-col>
+
+            <v-col v-if="activity.is_gradable" cols="12" md="3">
+              <VisVal label="Entrega" :value="activity.scheduled_at" />
+            </v-col>
+
+            <v-col v-if="activity.is_gradable" cols="12" md="3">
+              <VisVal label="Calificación máx." :value="activity.max_score" />
+            </v-col>
+
+            <v-col cols="12">
+              <VisVal label="Indicaciones" :value="activity.instructions" />
+            </v-col>
+
+            <v-col
+              cols="12"
+              class="text-caption font-weight-light text-medium-emphasis pb-0"
+            >
+              Recursos
+            </v-col>
+
+            <v-col
+              v-for="(activity_resources, i) of activity.activity_resources"
+              :key="i"
+              cols="12"
+              class="text-body-2 py-0"
+            >
+              {{ activity_resources.name }}
+              <VisDoc2
+                v-if="activity_resources.is_storage"
+                :value="activity_resources.storage_b64"
+              />
+              <v-btn
+                v-else
+                icon
+                variant="text"
+                size="x-small"
+                :href="activity_resources.url"
+                target="_blank"
+              >
+                <v-icon>mdi-open-in-new</v-icon>
+                <v-tooltip activator="parent" location="right">
+                  Abrir URL
+                </v-tooltip>
+              </v-btn>
+            </v-col>
+
+            <v-col cols="12" class="py-3">
+              <v-divider />
+            </v-col>
+
+            <v-col
+              v-if="activity.activity_submissions.length > 0"
+              cols="12"
+              class="text-body-2 py-0"
+            >
+              <v-table density="compact" striped="even">
+                <thead>
+                  <tr>
+                    <th width="40"><small>#</small></th>
+                    <th><small>Alumno</small></th>
+                    <th><small>Entregado</small></th>
+                    <th><small>Revisión</small></th>
+                    <th><small>Calificación</small></th>
+                    <th width="64" />
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(
+                      activity_submission, i
+                    ) in activity.activity_submissions"
+                    :key="i"
+                  >
+                    <td>
+                      {{ i + 1 }}
+                    </td>
+                    <td>
+                      {{ activity_submission.full_name }}
+                    </td>
+                    <td>
+                      {{ activity_submission.created_at }}
+                    </td>
+                    <td>
+                      {{ activity_submission.graded_at }}
+                    </td>
+                    <td>
+                      {{ activity_submission.score }}
+                    </td>
+                    <td class="text-right">
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="x-small"
+                        :color="!activity_submission.score ? 'warning' : ''"
+                        @click.prevent="
+                          activitySubmissionHandleDlg(activity_submission.id)
+                        "
+                      >
+                        <v-icon>mdi-eye</v-icon>
+                        <v-tooltip activator="parent" location="start">
+                          Ver detalle
+                        </v-tooltip>
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="activitySubmissionDlg"
+      persistent
+      scrim="black"
+      max-width="700"
+    >
+      <v-card
+        :loading="activitySubmissionLdg"
+        :disabled="activitySubmissionLdg"
+        flat
+      >
+        <v-card-title class="d-flex align-center justify-space-between">
+          <div class="d-flex align-center">
+            <div class="font-weight-light ps-1"></div>
+          </div>
+
+          <v-btn
+            icon
+            variant="text"
+            size="x-small"
+            @click="activitySubmissionDlg = false"
+          >
+            <v-icon>mdi-close</v-icon>
+            <v-tooltip activator="parent" location="left">Cerrar</v-tooltip>
+          </v-btn>
+        </v-card-title>
+
+        <v-card-text v-if="activitySubmission" class="pt-0">
+          <v-row>
+            <v-col cols="12" md="9">
+              <v-row dense>
+                <v-col cols="12" md="4">
+                  <VisVal
+                    label="Alumno"
+                    :value="activitySubmission.full_name"
+                  />
+                </v-col>
+
+                <v-col cols="12" md="4">
+                  <VisVal
+                    label="Entregado"
+                    :value="activitySubmission.created_at"
+                  />
+                </v-col>
+
+                <v-col cols="12" md="4">
+                  <VisVal
+                    label="Revisión"
+                    :value="activitySubmission.graded_at"
+                  />
+                </v-col>
+
+                <v-col cols="12" class="py-2">
+                  <v-divider />
+                </v-col>
+
+                <v-col cols="12">
+                  <v-row dense>
+                    <v-col
+                      cols="12"
+                      class="text-caption font-weight-light text-medium-emphasis pb-0"
+                    >
+                      Evidencia
+                    </v-col>
+
+                    <v-col
+                      v-for="(
+                        submission_resource, i
+                      ) of activitySubmission.submission_resources"
+                      :key="i"
+                      cols="12"
+                      class="text-body-2 py-0"
+                    >
+                      <span class="text-body-2 pt-3">
+                        {{ i + 1 }}.
+                        {{
+                          submission_resource.is_storage ? "Archivo" : "Vínculo"
+                        }}
+                      </span>
+                      <VisDoc2
+                        v-if="submission_resource.is_storage"
+                        :value="submission_resource.storage_b64"
+                      />
+                      <v-btn
+                        v-else
+                        icon
+                        variant="text"
+                        size="x-small"
+                        :href="submission_resource.url"
+                        target="_blank"
+                      >
+                        <v-icon>mdi-open-in-new</v-icon>
+                        <v-tooltip activator="parent" location="right">
+                          Abrir URL
+                        </v-tooltip>
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-col>
+
+            <v-col cols="12" md="3">
+              <v-row dense class="text-center">
+                <v-col
+                  cols="12"
+                  class="text-caption font-weight-light text-medium-emphasis pb-0"
+                >
+                  Calificación
+                </v-col>
+                <v-col cols="12">
+                  <div
+                    v-if="activitySubmission.score"
+                    class="text-h2 font-weight-light pb-3"
+                  >
+                    {{
+                      activitySubmission.score_temp
+                        ? activitySubmission.score_temp
+                        : "-"
+                    }}
+                  </div>
+                  <div v-if="activitySubmission.score == null">
+                    <v-text-field
+                      v-model="activitySubmission.score_temp"
+                      type="number"
+                      variant="outlined"
+                      density="compact"
+                      autocomplete="off"
+                      min="1"
+                      max="100"
+                      class="score-input-center"
+                    />
+                  </div>
+                  <div v-if="activitySubmission.score == null" class="pt-2">
+                    <v-btn
+                      block
+                      color="warning"
+                      size="small"
+                      :disabled="!activitySubmission.score_temp"
+                      @click.prevent="activitySubmissionScore()"
+                    >
+                      Calificar
+                      <v-icon end>mdi-send</v-icon>
+                    </v-btn>
+                  </div>
+                  <div v-else>
+                    <v-btn
+                      block
+                      size="small"
+                      :disabled="!activitySubmission.score_temp"
+                      @click.prevent="activitySubmissionScore(true)"
+                    >
+                      Borrar
+                      <v-icon end>mdi-eraser</v-icon>
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -639,6 +991,7 @@ import CardTitle from "@/components/CardTitle.vue";
 import InpDate from "@/components/InpDate.vue";
 import InpEditor from "@/components/InpEditor.vue";
 import VisDoc2 from "@/components/VisDoc2.vue";
+import VisVal from "@/components/VisVal.vue";
 
 const routeName = "groups";
 
@@ -813,13 +1166,14 @@ const activityForm = ref(null);
 
 const editorRef = ref(null);
 
-const activityHandleDlg = async (GroupModuleId, id = null) => {
+const activityHandleDlg = async (GroupModuleId, groupModuleIdx, id = null) => {
   activity.value = null;
 
   if (!id) {
     activity.value = {
       id: null,
       group_module_id: GroupModuleId,
+      group_module_idx: groupModuleIdx,
       activity_type_id: null,
       title: null,
       instructions: null,
@@ -844,6 +1198,7 @@ const activityHandleDlg = async (GroupModuleId, id = null) => {
       const endpoint = `${URL_API}/teacher/group_modules/activities/${id}`;
       const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
       activity.value = getRsp(response).data.item;
+      activity.value.group_module_idx = groupModuleIdx;
     } catch (err) {
       alert?.show("red-darken-1", getErr(err));
     } finally {
@@ -976,9 +1331,88 @@ const activityResourcesRemove = async (i) => {
   }
 };
 
+// Activity Detail
+const activityDetailDlg = ref(false);
+const activityDetailLdg = ref(false);
+
+const activityDetailHandleDlg = async (groupModuleIdx, id) => {
+  activity.value = null;
+  activityDetailLdg.value = true;
+  activityDetailDlg.value = true;
+
+  try {
+    const endpoint = `${URL_API}/teacher/group_modules/activity_details/${id}`;
+    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    activity.value = getRsp(response).data.item;
+    activity.value.group_module_idx = groupModuleIdx;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    activityDetailLdg.value = false;
+  }
+};
+
+const activitySubmission = ref(null);
+const activitySubmissionLdg = ref(false);
+const activitySubmissionDlg = ref(false);
+
+const activitySubmissionHandleDlg = async (id) => {
+  activitySubmission.value = null;
+  activitySubmissionLdg.value = true;
+  activitySubmissionDlg.value = true;
+
+  try {
+    const endpoint = `${URL_API}/teacher/group_modules/activity_submissions/${id}`;
+    const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
+    activitySubmission.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    activitySubmissionLdg.value = false;
+  }
+};
+const activitySubmissionScore = async (erase = false) => {
+  const confirmed = await confirm?.show(
+    `¿Confirma actualizar la calificación?`
+  );
+  if (!confirmed) return;
+
+  activitySubmissionLdg.value = true;
+  let payload = { ...activitySubmission.value };
+  payload.erase = erase;
+
+  try {
+    const endpoint = `${URL_API}/teacher/group_modules/activity_submissions_score`;
+    const response = getRsp(
+      await axios.post(endpoint, payload, getHdrs(store.getAuth?.token))
+    );
+
+    alert?.show("success", response.msg);
+    activitySubmissionDlg.value = false;
+    activityDetailHandleDlg(activity.value.group_module_idx, activity.value.id);
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  } finally {
+    activitySubmissionLdg.value = false;
+  }
+};
+
 onMounted(() => {
   getCatalogs();
   getItem();
   getGroupModules();
 });
 </script>
+
+<style scoped>
+.score-input-center :deep(.v-field__input) {
+  text-align: center !important;
+}
+
+.score-input-center :deep(.v-input__details) {
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0;
+  margin: 0;
+}
+</style>

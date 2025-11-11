@@ -94,10 +94,12 @@
                                 <thead>
                                   <tr>
                                     <th width="40"><small>#</small></th>
-                                    <th><small>Tipo</small></th>
                                     <th><small>Título</small></th>
+                                    <th><small>Tipo</small></th>
                                     <th><small>Porcentaje</small></th>
-                                    <th><small>Fecha de entrega</small></th>
+                                    <th><small>Entrega</small></th>
+                                    <th><small>Entregada</small></th>
+                                    <th><small>Calificación</small></th>
                                     <th width="64" />
                                   </tr>
                                 </thead>
@@ -115,10 +117,10 @@
                                       }}
                                     </td>
                                     <td>
-                                      {{ activity.activity_type.name }}
+                                      {{ activity.title }}
                                     </td>
                                     <td>
-                                      {{ activity.title }}
+                                      {{ activity.activity_type.name }}
                                     </td>
                                     <td>
                                       {{
@@ -132,14 +134,27 @@
                                     <td>
                                       {{ activity.scheduled_at }}
                                     </td>
+                                    <td>
+                                      {{
+                                        activity.activity_submission?.created_at
+                                      }}
+                                    </td>
+                                    <td>
+                                      {{ activity.activity_submission?.score }}
+                                    </td>
                                     <td class="text-right">
                                       <v-btn
                                         icon
                                         variant="text"
                                         size="x-small"
-                                        :color="!activity.activity_submission ? 'warning': (!activity.activity_submission.score ? 'info': '')"
+                                        :color="
+                                          !activity.activity_submission &&
+                                          activity.activity_type_id != 3
+                                            ? 'warning'
+                                            : ''
+                                        "
                                         @click.prevent="
-                                          activityHandleDlg(i + 1, activity.id)
+                                          activityHandleDlg(i, activity.id)
                                         "
                                       >
                                         <v-icon>mdi-eye</v-icon>
@@ -173,12 +188,19 @@
     </v-card-text>
 
     <!-- DIALOGS -->
-    <v-dialog v-model="activityDlg" persistent scrim="black" max-width="800">
+    <v-dialog v-model="activityDlg" persistent scrim="black" max-width="900">
       <v-card :loading="activityLdg" :disabled="activityLdg" flat>
         <v-card-title class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
-            <div class="font-weight-light ps-1">
+          <div>
+            <div class="font-weight-light ps-2">
               {{ activity?.title }}
+            </div>
+            <div
+              class="text-caption font-weight-light text-medium-emphasis ps-2"
+            >
+              <small>
+                {{ activity ? `Módulo ${activity.group_module_idx + 1}` : "" }}
+              </small>
             </div>
           </div>
 
@@ -195,6 +217,10 @@
 
         <v-card-text v-if="activity" class="pt-0">
           <v-row dense>
+            <v-col cols="12" class="py-3">
+              <v-divider />
+            </v-col>
+
             <v-col v-if="activity.is_gradable" cols="12" md="3">
               <VisVal label="Tipo" :value="activity?.activity_type?.name" />
             </v-col>
@@ -204,11 +230,11 @@
             </v-col>
 
             <v-col v-if="activity.is_gradable" cols="12" md="3">
-              <VisVal label="Calificación máxima" :value="activity.max_score" />
+              <VisVal label="Entrega" :value="activity.scheduled_at" />
             </v-col>
 
             <v-col v-if="activity.is_gradable" cols="12" md="3">
-              <VisVal label="Fecha de entrega" :value="activity.scheduled_at" />
+              <VisVal label="Calificación máx." :value="activity.max_score" />
             </v-col>
 
             <v-col cols="12">
@@ -246,6 +272,10 @@
                   Abrir URL
                 </v-tooltip>
               </v-btn>
+            </v-col>
+
+            <v-col cols="12" class="py-3">
+              <v-divider />
             </v-col>
 
             <v-col
@@ -361,41 +391,67 @@
               cols="12"
             >
               <v-row dense>
-                <v-col
-                  cols="12"
-                  class="text-caption font-weight-light text-medium-emphasis pb-0"
-                >
-                  Evidencia | {{ activity.activity_submission.created_at }}
+                <v-col cols="12" md="9">
+                  <v-row dense>
+                    <v-col
+                      cols="12"
+                      class="text-caption font-weight-light text-medium-emphasis pb-0"
+                    >
+                      Evidencia | {{ activity.activity_submission.created_at }}
+                    </v-col>
+
+                    <v-col
+                      v-for="(submission_resource, i) of activity
+                        .activity_submission.submission_resources"
+                      :key="i"
+                      cols="12"
+                      class="text-body-2 py-0"
+                    >
+                      <span class="text-body-2 pt-3">
+                        {{ i + 1 }}.
+                        {{
+                          submission_resource.is_storage ? "Archivo" : "Vínculo"
+                        }}
+                      </span>
+                      <VisDoc2
+                        v-if="submission_resource.is_storage"
+                        :value="submission_resource.storage_b64"
+                      />
+                      <v-btn
+                        v-else
+                        icon
+                        variant="text"
+                        size="x-small"
+                        :href="submission_resource.url"
+                        target="_blank"
+                      >
+                        <v-icon>mdi-open-in-new</v-icon>
+                        <v-tooltip activator="parent" location="right">
+                          Abrir URL
+                        </v-tooltip>
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-col>
 
-                <v-col
-                  v-for="(submission_resource, i) of activity
-                    .activity_submission.submission_resources"
-                  :key="i"
-                  cols="12"
-                  class="text-body-2 py-0"
-                >
-                  <span class="text-body-2 pt-3">
-                    {{ i + 1 }}.
-                    {{ submission_resource.is_storage ? "Archivo" : "Vínculo" }}
-                  </span>
-                  <VisDoc2
-                    v-if="submission_resource.is_storage"
-                    :value="submission_resource.storage_b64"
-                  />
-                  <v-btn
-                    v-else
-                    icon
-                    variant="text"
-                    size="x-small"
-                    :href="submission_resource.url"
-                    target="_blank"
-                  >
-                    <v-icon>mdi-open-in-new</v-icon>
-                    <v-tooltip activator="parent" location="right">
-                      Abrir URL
-                    </v-tooltip>
-                  </v-btn>
+                <v-col cols="12" md="3">
+                  <v-row dense class="text-center">
+                    <v-col
+                      cols="12"
+                      class="text-caption font-weight-light text-medium-emphasis pb-0"
+                    >
+                      Calificación
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="text-h2 font-weight-light pb-0">
+                        {{
+                          activity.activity_submission.score
+                            ? activity.activity_submission.score
+                            : "-"
+                        }}
+                      </div>
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-row>
             </v-col>
@@ -495,7 +551,7 @@ const activity = ref(null);
 const activityLdg = ref(false);
 const activityDlg = ref(false);
 
-const activityHandleDlg = async (moduleIdx, id = null) => {
+const activityHandleDlg = async (groupModuleIdx, id = null) => {
   activity.value = null;
   activityLdg.value = true;
   activityDlg.value = true;
@@ -504,7 +560,7 @@ const activityHandleDlg = async (moduleIdx, id = null) => {
     const endpoint = `${URL_API}/student/group_modules/activities/${id}`;
     const response = await axios.get(endpoint, getHdrs(store.getAuth?.token));
     activity.value = getRsp(response).data.item;
-    activity.value.module_idx = moduleIdx;
+    activity.value.group_module_idx = groupModuleIdx;
 
     if (
       !activity.value.activity_submission &&

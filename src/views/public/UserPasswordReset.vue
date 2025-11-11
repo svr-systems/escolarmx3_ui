@@ -12,7 +12,13 @@
             <v-col cols="12" class="text-left" style="height: 40px" />
 
             <v-col cols="12" class="pb-6">
-              <Logo width="60%" />
+              <Logo v-if="setting" :base64="setting.logo_b64" width="60%" />
+              <v-progress-circular
+                v-else
+                :size="160"
+                :width="7"
+                indeterminate
+              />
             </v-col>
 
             <v-col v-if="!item" cols="12">
@@ -100,7 +106,6 @@ import { useStore } from "@/store";
 import { URL_API } from "@/utils/config";
 import { getHdrs, getErr, getRsp } from "@/utils/http";
 import { getRules } from "@/utils/validators";
-import { getCurrentYear, getObj } from "@/utils/helpers";
 
 // Componentes
 import Logo from "@/components/Logo.vue";
@@ -121,6 +126,18 @@ const formRef = ref(null);
 const item = ref(null);
 const success = ref(false);
 const rules = getRules();
+
+const setting = ref(null);
+
+const getSetting = async () => {
+  try {
+    const endpoint = `${URL_API}/setting`;
+    const response = await axios.get(endpoint, getHdrs());
+    setting.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  }
+};
 
 // Obtener el usuario
 const getItem = async () => {
@@ -169,6 +186,8 @@ const handleAction = async () => {
 
 // Inicialización
 onMounted(() => {
+  getSetting();
+
   setTimeout(() => getItem(), 2500);
 });
 </script>

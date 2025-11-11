@@ -5,6 +5,7 @@ export const useStore = defineStore("auth", {
     auth: null,
     conf: {
       theme_dark: true,
+      setting: null,
     },
   }),
 
@@ -16,11 +17,15 @@ export const useStore = defineStore("auth", {
   },
 
   actions: {
+    settingAction(setting) {
+      this.conf.setting = setting;
+    },
     loginAction(auth) {
       this.auth = auth;
     },
     logoutAction() {
       this.auth = null;
+      this.conf.setting = null;
     },
     themeDarkAction() {
       this.conf.theme_dark = !this.conf.theme_dark;

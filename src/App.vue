@@ -14,7 +14,7 @@
 
 <script setup>
 // Importaciones de librerías
-import { ref, computed, getCurrentInstance, provide } from "vue";
+import { ref, computed, provide } from "vue";
 
 // Importaciones internas del proyecto
 import { useStore } from "@/store";
@@ -27,7 +27,6 @@ const store = useStore();
 const alert = ref(null);
 const confirm = ref(null);
 const auth = computed(() => store.getAuth);
-const app = getCurrentInstance()?.appContext.app;
 
 // Proveedores globales
 provide("alert", {

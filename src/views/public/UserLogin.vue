@@ -11,7 +11,13 @@
           <v-row dense>
             <v-col cols="12" class="text-left" style="height: 40px" />
             <v-col cols="12" class="pb-6">
-              <Logo width="60%" />
+              <Logo v-if="setting" :base64="setting.logo_b64" width="60%" />
+              <v-progress-circular
+                v-else
+                :size="160"
+                :width="7"
+                indeterminate
+              />
             </v-col>
             <v-col cols="12">
               <v-form ref="formRef" @submit.prevent="loginAction">
@@ -79,25 +85,21 @@
 </template>
 
 <script setup>
-// Librerías
 import { ref, inject, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
-// Estado global y utilidades
 import { useStore } from "@/store";
 import { URL_API } from "@/utils/config";
 import { getHdrs, getErr, getRsp } from "@/utils/http";
 import { getObj } from "@/utils/helpers";
 import { getRules } from "@/utils/validators";
 
-// Componentes
 import Logo from "@/components/Logo.vue";
 import InpPassword from "@/components/InpPassword.vue";
 import BtnTheme from "@/components/BtnTheme.vue";
 import Version from "@/components/Version.vue";
 
-// Estado
 const alert = inject("alert");
 const router = useRouter();
 const store = useStore();
@@ -107,7 +109,18 @@ const formRef = ref(null);
 const item = ref({ email: "", password: "" });
 const rules = getRules();
 
-// Funciones
+const setting = ref(null);
+
+const getSetting = async () => {
+  try {
+    const endpoint = `${URL_API}/setting`;
+    const response = await axios.get(endpoint, getHdrs());
+    setting.value = getRsp(response).data.item;
+  } catch (err) {
+    alert?.show("red-darken-1", getErr(err));
+  }
+};
+
 const loginAction = async () => {
   const { valid } = await formRef.value.validate();
   if (!valid) return;
@@ -120,6 +133,7 @@ const loginAction = async () => {
     const response = await axios.post(endpoint, payload, getHdrs());
 
     const auth = getRsp(response).data.auth;
+    await store.settingAction(setting.value);
     await store.loginAction(auth);
 
     await router.replace({
@@ -138,5 +152,7 @@ onMounted(() => {
   if (auth?.token) {
     router.replace({ name: "home" });
   }
+
+  getSetting();
 });
 </script>

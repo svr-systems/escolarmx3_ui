@@ -12,3 +12,7 @@
 .text-description {
   white-space: pre-line;
 }
+
+.score-input-center :deep(.v-field__input) {
+  text-align: center; /* equivale a text-center en el input */
+}

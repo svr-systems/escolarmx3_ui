@@ -29,7 +29,7 @@
               </v-card-title>
               <v-card-text>
                 <v-row dense>
-                  <v-col cols="12" md="9">
+                  <v-col cols="12" md="6">
                     <v-text-field
                       label="Nombre"
                       v-model="item.name"
@@ -37,6 +37,18 @@
                       variant="outlined"
                       density="compact"
                       maxlength="50"
+                      counter
+                      :rules="rules.textRequired"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-text-field
+                      label="Nombre APP"
+                      v-model="item.app_name"
+                      type="text"
+                      variant="outlined"
+                      density="compact"
+                      maxlength="30"
                       counter
                       :rules="rules.textRequired"
                     />
@@ -49,7 +61,7 @@
                       density="compact"
                       prepend-icon=""
                       show-size
-                      accept=".jpg,.jpeg,.png"
+                      accept=".png"
                       :rules="rules.imageOptional"
                       :disabled="item.logo_dlt"
                     />
@@ -76,7 +88,7 @@
                       </v-btn>
                     </div>
                   </v-col>
-                  <v-col cols="12" md="6">
+                  <v-col cols="12" md="3">
                     <v-text-field
                       label="Clave"
                       v-model="item.code"
@@ -88,7 +100,7 @@
                       :rules="rules.textRequired"
                     />
                   </v-col>
-                  <v-col cols="12" md="6">
+                  <v-col cols="12" md="3">
                     <v-text-field
                       label="CCT"
                       v-model="item.cct"
@@ -200,6 +212,8 @@ const handleAction = async () => {
     );
 
     alert?.show("success", response.msg);
+
+    await store.settingAction(response.data);
 
     router.push({
       name: `${routeName}/show`,

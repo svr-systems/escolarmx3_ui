@@ -68,13 +68,16 @@
                 <v-col cols="12" md="6">
                   <VisVal label="Nombre" :value="item.name" />
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="3">
+                  <VisVal label="Nombre APP" :value="item.app_name" />
+                </v-col>
+                <v-col cols="12" md="3">
                   <VisDoc label="Logo" :value="item.logo_b64" img />
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="3">
                   <VisVal label="Clave" :value="item.code" />
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="3">
                   <VisVal label="CCT" :value="item.cct" />
                 </v-col>
               </v-row>
