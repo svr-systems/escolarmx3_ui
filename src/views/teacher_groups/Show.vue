@@ -112,14 +112,6 @@
                                   </v-tooltip>
                                 </v-btn>
                               </div>
-                              <div
-                                class="text-caption font-weight-thin text-medium-emphasis"
-                              >
-                                <small>
-                                  {{ groupModule.start_at }} |
-                                  {{ groupModule.end_at }}
-                                </small>
-                              </div>
                             </v-col>
 
                             <v-col cols="12">
@@ -497,7 +489,7 @@
                         inline
                       >
                         <v-radio label="Archivo" :value="true" />
-                        <v-radio label="URL" :value="false" />
+                        <v-radio label="Vínculo" :value="false" />
                       </v-radio-group>
                     </v-col>
                     <v-col cols="12" md="4">
@@ -519,14 +511,13 @@
                       class="d-flex"
                     >
                       <v-file-input
-                        label="Archivo"
                         v-model="activity_resources.storage_doc"
                         variant="outlined"
                         density="compact"
                         prepend-icon=""
                         show-size
                         accept=".pdf"
-                        :rules="rules.fileOptional"
+                        :rules="rules.fileRequired"
                       />
                       <div
                         v-if="
@@ -548,7 +539,9 @@
                               variant="text"
                               size="small"
                               :color="
-                                activity_resources.storage_dlt ? 'error' : undefined
+                                activity_resources.storage_dlt
+                                  ? 'error'
+                                  : undefined
                               "
                               @click.prevent="
                                 activity_resources.storage_dlt =
@@ -574,7 +567,6 @@
                     </v-col>
                     <v-col v-else cols="12" md="4">
                       <v-text-field
-                        label="URL"
                         v-model="activity_resources.url"
                         type="text"
                         variant="outlined"
@@ -888,7 +880,10 @@ const onActivityTypeChange = (id) => {
 };
 
 const activityHandle = async () => {
-  const editorValid = editorRef.value && typeof editorRef.value.validate === 'function' ? editorRef.value.validate() : true;
+  const editorValid =
+    editorRef.value && typeof editorRef.value.validate === "function"
+      ? editorRef.value.validate()
+      : true;
   const { valid } = await activityForm.value.validate();
   if (!editorValid || !valid) {
     return;

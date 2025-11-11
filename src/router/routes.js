@@ -6,6 +6,36 @@ import { Roles } from "./middleware/Roles";
 const routes = [
   /**
    * ===========================================
+   * Students
+   * ===========================================
+   */
+
+  /**
+   * Groups
+   */
+  {
+    path: "/alumno/grupos",
+    name: "student/groups",
+    component: () => import("@/views/student_groups/List.vue"),
+    meta: {
+      title: "Grupos",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([5])],
+    },
+  },
+  {
+    path: "/alumno/grupos/:id",
+    name: "student/groups/show",
+    component: () => import("@/views/student_groups/Show.vue"),
+    props: true,
+    meta: {
+      title: "Grupo",
+      icon: "mdi-book-open-variant",
+      middleware: [Auth, Roles([5])],
+    },
+  },
+  /**
+   * ===========================================
    * Teachers
    * ===========================================
    */

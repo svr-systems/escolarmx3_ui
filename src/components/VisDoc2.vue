@@ -1,24 +1,28 @@
 <template>
-  <div>
-    <div v-if="value" class="d-inline-flex align-center ga-1">
-      <v-btn icon variant="text" size="x-small" @click.prevent="docPreview">
-        <v-icon>mdi-file-pdf-box</v-icon>
-        <v-tooltip activator="parent" location="right">Vista previa</v-tooltip>
-      </v-btn>
+  <div v-if="value" class="d-inline-flex align-center ga-1">
+    <v-btn icon variant="text" size="x-small" @click.prevent="docPreview">
+      <v-icon>mdi-file-eye</v-icon>
+      <v-tooltip activator="parent" location="right">Vista previa</v-tooltip>
+    </v-btn>
 
-      <v-btn icon variant="text" size="x-small" @click.prevent="docDwd" :disabled="disabled">
-        <v-icon>mdi-download</v-icon>
-        <v-tooltip activator="parent" location="right">Descargar</v-tooltip>
-      </v-btn>
-    </div>
-
-    <v-tooltip v-else location="right">
-      <template #activator="{ props: activatorProps }">
-        <v-icon v-bind="activatorProps" size="small">mdi-alert</v-icon>
-      </template>
-      <span>Pendiente</span>
-    </v-tooltip>
+    <v-btn
+      icon
+      variant="text"
+      size="x-small"
+      @click.prevent="docDwd"
+      :disabled="disabled"
+    >
+      <v-icon>mdi-download</v-icon>
+      <v-tooltip activator="parent" location="right">Descargar</v-tooltip>
+    </v-btn>
   </div>
+
+  <v-tooltip v-else location="right">
+    <template #activator="{ props: activatorProps }">
+      <v-icon v-bind="activatorProps" size="small">mdi-alert</v-icon>
+    </template>
+    <span>Pendiente</span>
+  </v-tooltip>
 </template>
 
 <script setup>
@@ -59,7 +63,7 @@ onMounted(() => {
     try {
       docUrl.value = URL.createObjectURL(getBlob(value.cnt, value.ext));
     } catch (error) {
-      console.error('Error al crear el blob del documento:', error);
+      console.error("Error al crear el blob del documento:", error);
       docUrl.value = null;
     }
   }

@@ -119,10 +119,12 @@ const loginAction = async () => {
     const endpoint = `${URL_API}/login`;
     const response = await axios.post(endpoint, payload, getHdrs());
 
-    await store.loginAction(getRsp(response).data.auth);
+    const auth = getRsp(response).data.auth;
+    await store.loginAction(auth);
 
-    // Reemplaza la entrada de /iniciar_sesion en el historial
-    await router.replace({ name: "home" });
+    await router.replace({
+      name: auth.user.role_id == 5 ? "student/groups" : "home",
+    });
   } catch (err) {
     alert?.show("red-darken-1", getErr(err));
   } finally {
